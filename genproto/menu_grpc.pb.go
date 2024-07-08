@@ -22,11 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MenuServiceClient interface {
-	CreateReservation(ctx context.Context, in *CreateMenuRequest, opts ...grpc.CallOption) (*Void, error)
-	UpdateReservation(ctx context.Context, in *UpdateMenuRequest, opts ...grpc.CallOption) (*Void, error)
-	DeleteReservation(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*Void, error)
-	GetByIdReservation(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*MenuResponse, error)
-	GetAllReservation(ctx context.Context, in *GetAllMenuRequest, opts ...grpc.CallOption) (*MenusResponse, error)
+	CreateMenu(ctx context.Context, in *CreateMenuRequest, opts ...grpc.CallOption) (*Void, error)
+	UpdateMenu(ctx context.Context, in *UpdateMenuRequest, opts ...grpc.CallOption) (*Void, error)
+	DeleteMenu(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*Void, error)
+	GetByIdMenu(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*MenuResponse, error)
+	GetAllMenu(ctx context.Context, in *GetAllMenuRequest, opts ...grpc.CallOption) (*MenusResponse, error)
 }
 
 type menuServiceClient struct {
@@ -37,45 +37,45 @@ func NewMenuServiceClient(cc grpc.ClientConnInterface) MenuServiceClient {
 	return &menuServiceClient{cc}
 }
 
-func (c *menuServiceClient) CreateReservation(ctx context.Context, in *CreateMenuRequest, opts ...grpc.CallOption) (*Void, error) {
+func (c *menuServiceClient) CreateMenu(ctx context.Context, in *CreateMenuRequest, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/protos.MenuService/CreateReservation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protos.MenuService/CreateMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *menuServiceClient) UpdateReservation(ctx context.Context, in *UpdateMenuRequest, opts ...grpc.CallOption) (*Void, error) {
+func (c *menuServiceClient) UpdateMenu(ctx context.Context, in *UpdateMenuRequest, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/protos.MenuService/UpdateReservation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protos.MenuService/UpdateMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *menuServiceClient) DeleteReservation(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*Void, error) {
+func (c *menuServiceClient) DeleteMenu(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/protos.MenuService/DeleteReservation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protos.MenuService/DeleteMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *menuServiceClient) GetByIdReservation(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*MenuResponse, error) {
+func (c *menuServiceClient) GetByIdMenu(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*MenuResponse, error) {
 	out := new(MenuResponse)
-	err := c.cc.Invoke(ctx, "/protos.MenuService/GetByIdReservation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protos.MenuService/GetByIdMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *menuServiceClient) GetAllReservation(ctx context.Context, in *GetAllMenuRequest, opts ...grpc.CallOption) (*MenusResponse, error) {
+func (c *menuServiceClient) GetAllMenu(ctx context.Context, in *GetAllMenuRequest, opts ...grpc.CallOption) (*MenusResponse, error) {
 	out := new(MenusResponse)
-	err := c.cc.Invoke(ctx, "/protos.MenuService/GetAllReservation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protos.MenuService/GetAllMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,11 +86,11 @@ func (c *menuServiceClient) GetAllReservation(ctx context.Context, in *GetAllMen
 // All implementations must embed UnimplementedMenuServiceServer
 // for forward compatibility
 type MenuServiceServer interface {
-	CreateReservation(context.Context, *CreateMenuRequest) (*Void, error)
-	UpdateReservation(context.Context, *UpdateMenuRequest) (*Void, error)
-	DeleteReservation(context.Context, *IdRequest) (*Void, error)
-	GetByIdReservation(context.Context, *IdRequest) (*MenuResponse, error)
-	GetAllReservation(context.Context, *GetAllMenuRequest) (*MenusResponse, error)
+	CreateMenu(context.Context, *CreateMenuRequest) (*Void, error)
+	UpdateMenu(context.Context, *UpdateMenuRequest) (*Void, error)
+	DeleteMenu(context.Context, *IdRequest) (*Void, error)
+	GetByIdMenu(context.Context, *IdRequest) (*MenuResponse, error)
+	GetAllMenu(context.Context, *GetAllMenuRequest) (*MenusResponse, error)
 	mustEmbedUnimplementedMenuServiceServer()
 }
 
@@ -98,20 +98,20 @@ type MenuServiceServer interface {
 type UnimplementedMenuServiceServer struct {
 }
 
-func (UnimplementedMenuServiceServer) CreateReservation(context.Context, *CreateMenuRequest) (*Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateReservation not implemented")
+func (UnimplementedMenuServiceServer) CreateMenu(context.Context, *CreateMenuRequest) (*Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMenu not implemented")
 }
-func (UnimplementedMenuServiceServer) UpdateReservation(context.Context, *UpdateMenuRequest) (*Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateReservation not implemented")
+func (UnimplementedMenuServiceServer) UpdateMenu(context.Context, *UpdateMenuRequest) (*Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMenu not implemented")
 }
-func (UnimplementedMenuServiceServer) DeleteReservation(context.Context, *IdRequest) (*Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteReservation not implemented")
+func (UnimplementedMenuServiceServer) DeleteMenu(context.Context, *IdRequest) (*Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenu not implemented")
 }
-func (UnimplementedMenuServiceServer) GetByIdReservation(context.Context, *IdRequest) (*MenuResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetByIdReservation not implemented")
+func (UnimplementedMenuServiceServer) GetByIdMenu(context.Context, *IdRequest) (*MenuResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByIdMenu not implemented")
 }
-func (UnimplementedMenuServiceServer) GetAllReservation(context.Context, *GetAllMenuRequest) (*MenusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllReservation not implemented")
+func (UnimplementedMenuServiceServer) GetAllMenu(context.Context, *GetAllMenuRequest) (*MenusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMenu not implemented")
 }
 func (UnimplementedMenuServiceServer) mustEmbedUnimplementedMenuServiceServer() {}
 
@@ -126,92 +126,92 @@ func RegisterMenuServiceServer(s grpc.ServiceRegistrar, srv MenuServiceServer) {
 	s.RegisterService(&MenuService_ServiceDesc, srv)
 }
 
-func _MenuService_CreateReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuService_CreateMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateMenuRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MenuServiceServer).CreateReservation(ctx, in)
+		return srv.(MenuServiceServer).CreateMenu(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protos.MenuService/CreateReservation",
+		FullMethod: "/protos.MenuService/CreateMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).CreateReservation(ctx, req.(*CreateMenuRequest))
+		return srv.(MenuServiceServer).CreateMenu(ctx, req.(*CreateMenuRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MenuService_UpdateReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuService_UpdateMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateMenuRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MenuServiceServer).UpdateReservation(ctx, in)
+		return srv.(MenuServiceServer).UpdateMenu(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protos.MenuService/UpdateReservation",
+		FullMethod: "/protos.MenuService/UpdateMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).UpdateReservation(ctx, req.(*UpdateMenuRequest))
+		return srv.(MenuServiceServer).UpdateMenu(ctx, req.(*UpdateMenuRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MenuService_DeleteReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuService_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MenuServiceServer).DeleteReservation(ctx, in)
+		return srv.(MenuServiceServer).DeleteMenu(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protos.MenuService/DeleteReservation",
+		FullMethod: "/protos.MenuService/DeleteMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).DeleteReservation(ctx, req.(*IdRequest))
+		return srv.(MenuServiceServer).DeleteMenu(ctx, req.(*IdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MenuService_GetByIdReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuService_GetByIdMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MenuServiceServer).GetByIdReservation(ctx, in)
+		return srv.(MenuServiceServer).GetByIdMenu(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protos.MenuService/GetByIdReservation",
+		FullMethod: "/protos.MenuService/GetByIdMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).GetByIdReservation(ctx, req.(*IdRequest))
+		return srv.(MenuServiceServer).GetByIdMenu(ctx, req.(*IdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MenuService_GetAllReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MenuService_GetAllMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllMenuRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MenuServiceServer).GetAllReservation(ctx, in)
+		return srv.(MenuServiceServer).GetAllMenu(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protos.MenuService/GetAllReservation",
+		FullMethod: "/protos.MenuService/GetAllMenu",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MenuServiceServer).GetAllReservation(ctx, req.(*GetAllMenuRequest))
+		return srv.(MenuServiceServer).GetAllMenu(ctx, req.(*GetAllMenuRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -224,24 +224,24 @@ var MenuService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*MenuServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateReservation",
-			Handler:    _MenuService_CreateReservation_Handler,
+			MethodName: "CreateMenu",
+			Handler:    _MenuService_CreateMenu_Handler,
 		},
 		{
-			MethodName: "UpdateReservation",
-			Handler:    _MenuService_UpdateReservation_Handler,
+			MethodName: "UpdateMenu",
+			Handler:    _MenuService_UpdateMenu_Handler,
 		},
 		{
-			MethodName: "DeleteReservation",
-			Handler:    _MenuService_DeleteReservation_Handler,
+			MethodName: "DeleteMenu",
+			Handler:    _MenuService_DeleteMenu_Handler,
 		},
 		{
-			MethodName: "GetByIdReservation",
-			Handler:    _MenuService_GetByIdReservation_Handler,
+			MethodName: "GetByIdMenu",
+			Handler:    _MenuService_GetByIdMenu_Handler,
 		},
 		{
-			MethodName: "GetAllReservation",
-			Handler:    _MenuService_GetAllReservation_Handler,
+			MethodName: "GetAllMenu",
+			Handler:    _MenuService_GetAllMenu_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

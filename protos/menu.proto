@@ -40,9 +40,9 @@ message  GetAllMenuRequest{
 }
 
 service  MenuService{
-  rpc CreateReservation(CreateMenuRequest)returns(Void);
-  rpc UpdateReservation(UpdateMenuRequest)returns(Void);
-  rpc DeleteReservation(IdRequest)returns(Void);
-  rpc GetByIdReservation(IdRequest)returns(MenuResponse);
-  rpc GetAllReservation(GetAllMenuRequest)returns(MenusResponse);
+  rpc CreateMenu(CreateMenuRequest)returns(Void);
+  rpc UpdateMenu(UpdateMenuRequest)returns(Void);
+  rpc DeleteMenu(IdRequest)returns(Void);
+  rpc GetByIdMenu(IdRequest)returns(MenuResponse);
+  rpc GetAllMenu(GetAllMenuRequest)returns(MenusResponse);
 }
