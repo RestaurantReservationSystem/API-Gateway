@@ -1,0 +1,47 @@
+syntax="proto3";
+
+option  go_package="/genproto";
+
+package protos;
+
+
+import  "common.proto";
+message CreatePaymentRequest{
+  string  reservation_id=1;
+  float  amount=2;
+  string  payment_method=3;
+  string  payment_status=4;
+}
+message UpdatePaymentRequest{
+  string  Id=1;
+  string  reservation_id=2;
+  float  amount=3;
+  string  payment_method=4;
+  string  payment_status=5;
+}
+message PaymentResponse{
+  string  reservation_id=1;
+  float  amount=2;
+  string  payment_method=3;
+  string  payment_status=4;
+}
+message  PaymentsResponse{
+  repeated  PaymentResponse payments=1;
+}
+message  GetAllPaymentRequest{
+  string  reservation_id=1;
+  float  amount=2;
+  string  payment_method=3;
+  string  payment_status=4;
+  Filter limitOffset=5;
+}
+
+service  PaymentService {
+  rpc CreatePayment(CreatePaymentRequest)returns(Void);
+  rpc UpdatePayment(UpdatePaymentRequest)returns(Void);
+  rpc DeletePayment(IdRequest)returns(Void);
+  rpc GetByIdPayment(IdRequest)returns(PaymentResponse);
+  rpc GetAllPayment(GetAllPaymentRequest)returns(PaymentsResponse);
+
+}
+
