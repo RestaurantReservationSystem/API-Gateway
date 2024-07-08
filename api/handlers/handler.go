@@ -7,8 +7,12 @@ import (
 type Handler struct {
 	PaymentService     genproto.PaymentServiceClient
 	ReservationService genproto.ReservationServiceClient
+	UsersService       genproto.UserServiceClient
 }
 
-func NewHandler(py genproto.PaymentServiceClient, rs genproto.ReservationServiceClient) *Handler {
-	return &Handler{PaymentService: py, ReservationService: rs}
+func NewHandler(py genproto.PaymentServiceClient, rs genproto.ReservationServiceClient, user genproto.UserServiceClient) *Handler {
+	return &Handler{
+		PaymentService:     py,
+		ReservationService: rs,
+		UsersService:       user}
 }
