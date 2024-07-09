@@ -23,7 +23,7 @@ func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
 	}
 
-	_, err = h.Menu.CreateReservation(ctx, &request)
+	_, err = h.Menu.CreateMenu(ctx, &request)
 
 	if err != nil {
 		InternalServerError(ctx, err)
@@ -48,7 +48,7 @@ func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("maliumot toliq emas"))
 	}
 
-	_, err = h.Menu.UpdateReservation(ctx, &request)
+	_, err = h.Menu.UpdateMenu(ctx, &request)
 
 	if err != nil {
 		InternalServerError(ctx, err)
@@ -62,7 +62,7 @@ func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 
 	Parse(ctx, id)
 
-	_, err := h.Menu.DeleteReservation(ctx, &pb.IdRequest{Id: id})
+	_, err := h.Menu.DeleteMenu(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
 		InternalServerError(ctx, err)
@@ -76,7 +76,7 @@ func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 
 	Parse(ctx, id)
 
-	resp, err := h.Menu.GetByIdReservation(ctx, &pb.IdRequest{Id: id})
+	resp, err := h.Menu.GetByIdMenu(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
 		InternalServerError(ctx, err)
@@ -102,7 +102,7 @@ func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
 	}
 
-	resp, err := h.Menu.GetAllReservation(ctx, &request)
+	resp, err := h.Menu.GetAllMenu(ctx, &request)
 
 	if err != nil {
 		InternalServerError(ctx, err)
