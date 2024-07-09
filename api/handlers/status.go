@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func OK(gn *gin.Context, err error) {
@@ -28,7 +29,6 @@ func Created(gn *gin.Context, err error) {
 
 }
 func InternalServerError(gn *gin.Context, err error) {
-	fmt.Println("salom")
 	gn.JSON(http.StatusInternalServerError, gin.H{
 		"status":  http.StatusInternalServerError,
 		"time":    time.Now(),
@@ -47,4 +47,12 @@ func BadRequest(gn *gin.Context, err error) {
 	})
 	gn.Header("Content-Type", "application/json")
 
+}
+
+func Parse(ctx *gin.Context,id string)  {
+	_,err:=uuid.Parse(id)
+
+	if err != nil {
+		BadRequest(ctx,err)
+	}
 }
