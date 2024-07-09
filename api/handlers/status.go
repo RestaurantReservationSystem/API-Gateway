@@ -49,10 +49,8 @@ func BadRequest(gn *gin.Context, err error) {
 
 }
 
-func Parse(ctx *gin.Context,id string)  {
-	_,err:=uuid.Parse(id)
+func Parse(id string) bool {
+	_, err := uuid.Parse(id)
 
-	if err != nil {
-		BadRequest(ctx,err)
-	}
+	return !(err==nil)
 }

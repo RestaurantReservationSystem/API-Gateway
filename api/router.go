@@ -34,8 +34,17 @@ func RouterApi(hand *handlers.Handler) {
 		menu.POST("/create")
 		menu.GET("/get_all")
 		menu.GET("/get_id/:id")
-		menu.POST("/update/:id")
+		menu.PUT("/update/:id")
 		menu.DELETE("/delete/:id")
+	}
+
+	order := router.Group("/api/order")
+	{
+		order.POST("/create")
+		order.GET("/get_all")
+		order.GET("/get_id/:id")
+		order.PUT("/update/:id")
+		order.DELETE("/delete/:id")
 	}
 
 	payment := router.Group("/api/payment")
@@ -43,5 +52,9 @@ func RouterApi(hand *handlers.Handler) {
 		payment.POST("/create")
 		payment.GET("/get_id/:id")
 		payment.PUT("update/:id")
+		payment.DELETE("/delete/:id")
+		payment.GET("/get_all")
+
+		
 	}
 }

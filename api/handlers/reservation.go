@@ -9,6 +9,18 @@ import (
 	"github.com/google/uuid"
 )
 
+// CreateReservationHandler 		handles the creation of a new user
+// @Summary 		Create Menu
+// @Description 	Create page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Create  body     pb.RegisterUserRequest  true   "Create"
+// @Success 		200   {string}      "Create Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/reservation/create [post]
+
 func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 
 	request := pb.CreateReservationRequest{}
@@ -46,6 +58,18 @@ func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 	Created(ctx, nil)
 
 }
+
+// UpdateReservationHandler 		handles the creation of a new user
+// @Summary 		Update Menu
+// @Description 	Update page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Update  body     pb.RegisterUserRequest  true   "Update"
+// @Success 		200   {string}      "Update Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/reservation/update/:id [put]
 
 func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
 
@@ -85,6 +109,18 @@ func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
 
 }
 
+// DeleteReservationHandler 		handles the creation of a new user
+// @Summary 		Delete Menu
+// @Description 	Delete page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Delete  body     pb.RegisterUserRequest  true   "Delete"
+// @Success 		200   {string}      "Delete Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/reservation/delete/:id [delete]
+
 func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
 
 	id := ctx.Param("id")
@@ -107,6 +143,18 @@ func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
 
 	Created(ctx, nil)
 }
+
+// GetByIdReservationHandler 		handles the creation of a new user
+// @Summary 		GetId Menu
+// @Description 	GetId page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Get  body     pb.RegisterUserRequest  true   "Get"
+// @Success 		200   {string}      "GetId Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/reservation/get_id/:id [get]
 
 func (h *Handler) GetByIdReservationHandler(ctx *gin.Context) {
 
@@ -131,6 +179,18 @@ func (h *Handler) GetByIdReservationHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 
 }
+
+// GetAllReservationHandler 		handles the creation of a new user
+// @Summary 		GetAll Menu
+// @Description 	GetAll page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Get  body     pb.RegisterUserRequest  true   "Get"
+// @Success 		200   {string}      "GetAll Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/reservation/get_all [get]
 
 func (h *Handler) GetAllReservationHandler(ctx *gin.Context) {
 
