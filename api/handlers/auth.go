@@ -2,10 +2,9 @@ package handlers
 
 import (
 	pb "api_get_way/genproto"
+	"fmt"
 	"net/http"
 	"strings"
-
-	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +15,7 @@ func (h *Handler) RegisterHendler(ctx *gin.Context) {
 	err := ctx.ShouldBind(&request)
 
 	if err != nil {
-		BadRequest(ctx,err)
+		BadRequest(ctx, err)
 		return
 	}
 
@@ -50,11 +49,7 @@ func (h *Handler) RegisterHendler(ctx *gin.Context) {
 func (h *Handler) DeleteUserHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	_, err := uuid.Parse(id)
-	if err != nil {
-		BadRequest(ctx,err)
-		return
-	}
+	Parse(ctx, id)
 
 	request := pb.IdRequest{
 		Id: id,
@@ -93,14 +88,7 @@ func (h *Handler) UpdateUserHandler(ctx *gin.Context) {
 
 func (h *Handler) GetUserByIdHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
-
-	_, err := uuid.Parse(id)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "Id notogri formatda",
-		})
-		return
-	}
+	Parse(ctx, id)
 
 	request := pb.IdRequest{
 		Id: id,
@@ -128,9 +116,7 @@ func (h *Handler) GetAllUserHandler(ctx *gin.Context) {
 	}
 
 	if !strings.Contains(request.Email, "@gmail.com") {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"ERROR": "gmail hato kiritdingiz!",
-		})
+		BadRequest(ctx,fmt.Errorf("email hato"))
 		return
 	}
 
