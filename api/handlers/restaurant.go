@@ -11,6 +11,18 @@ import (
 	"github.com/google/uuid"
 )
 
+// CreateRestaurantHandler 		handles the creation of a new user
+// @Summary 		Create Menu
+// @Description 	Create page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Create  body     pb.RegisterUserRequest  true   "Create"
+// @Success 		200   {string}      "Create Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/create [post]
+
 func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 	request := pb.CreateRestaurantRequest{}
 
@@ -45,9 +57,33 @@ func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 	Created(ctx, nil)
 }
 
+// UpdateRestaurant 		handles the creation of a new user
+// @Summary 		Update Menu
+// @Description 	Update page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Update  body     pb.RegisterUserRequest  true   "Update"
+// @Success 		200   {string}      "Update Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/update/:id [put]
+
 func (h *Handler) UpdateRestaurant() {
 
 }
+
+// DeleteRestaurantHandler 		handles the creation of a new user
+// @Summary 		Delete Menu
+// @Description 	Delete page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Delete  body     pb.RegisterUserRequest  true   "Delete"
+// @Success 		200   {string}      "Delete Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/Delete/:id [put]
 
 func (h *Handler) DeleteRestaurantHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
@@ -67,6 +103,18 @@ func (h *Handler) DeleteRestaurantHandler(ctx *gin.Context) {
 	OK(ctx, nil)
 }
 
+// GetByIdRestaurantHandler 		handles the creation of a new user
+// @Summary 		GetId Menu
+// @Description 	GetId page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		GetId  body     pb.RegisterUserRequest  true   "GetId"
+// @Success 		200   {string}      "GetId Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/get_by_id/:id [get]
+
 func (h *Handler) GetByIdRestaurantHandler(ctx *gin.Context) {
 
 	id := ctx.Param("id")
@@ -77,27 +125,39 @@ func (h *Handler) GetByIdRestaurantHandler(ctx *gin.Context) {
 		BadRequest(ctx, err)
 	}
 
-	resp,err:=h.Restaran.GetByIdRestaurant(ctx,&pb.IdRequest{Id: id,})
+	resp, err := h.Restaran.GetByIdRestaurant(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
-		InternalServerError(ctx,err)
+		InternalServerError(ctx, err)
 	}
 
-	ctx.JSON(http.StatusOK,resp)
+	ctx.JSON(http.StatusOK, resp)
 }
 
-func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
-	
-	request:=pb.GetAllRestaurantRequest{}
+// GetAllRestaurantsHandler 		handles the creation of a new user
+// @Summary 		GetAll Menu
+// @Description 	GetAll page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		GetAll  body     pb.RegisterUserRequest  true   "GetAll"
+// @Success 		200   {string}      "GetAll Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/get_all [get]
 
-	err:=ctx.ShouldBind(&request)
+func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
+
+	request := pb.GetAllRestaurantRequest{}
+
+	err := ctx.ShouldBind(&request)
 
 	if err != nil {
-		BadRequest(ctx,err)
+		BadRequest(ctx, err)
 	}
 
-	if request.Address=="" || request.Description=="" || request.Name==""{
-		BadRequest(ctx,fmt.Errorf("malumot tioliq emas"))
+	if request.Address == "" || request.Description == "" || request.Name == "" {
+		BadRequest(ctx, fmt.Errorf("malumot tioliq emas"))
 	}
 
 	if len(request.PhoneNumber) == 16 {
@@ -113,11 +173,11 @@ func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
 		}
 	}
 
-	resp,err:=h.Restaran.GetAllRestaurants(ctx,&request)
+	resp, err := h.Restaran.GetAllRestaurants(ctx, &request)
 
 	if err != nil {
-		InternalServerError(ctx,err)
+		InternalServerError(ctx, err)
 	}
 
-	ctx.JSON(http.StatusOK,resp)
+	ctx.JSON(http.StatusOK, resp)
 }
