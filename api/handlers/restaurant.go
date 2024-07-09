@@ -69,7 +69,45 @@ func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 // @Failure 		401   {string}   string    "Error while Created"
 // @Router 			/api/restaurant/update/:id [put]
 
-func (h *Handler) UpdateRestaurant() {
+func (h *Handler) UpdateRestaurant(ctx *gin.Context) {
+	request := pb.UpdateRestaurantRequest{}
+
+	err := ctx.ShouldBind(&request)
+
+	if err != nil {
+		BadRequest(ctx, err)
+	}
+
+	if Parse(request.Id) {
+		BadRequest(ctx, fmt.Errorf("ifd hato"))
+		return
+	}
+
+	if request.Name == "" || request.Address == "" {
+		BadRequest(ctx, fmt.Errorf("malumiot toliq emas"))
+		return
+	}
+
+	if len(request.PhoneNumber) == 16 {
+		tel := strings.Split(request.PhoneNumber, "-")
+
+		for _, v := range tel {
+			_, err = strconv.Atoi(string(v))
+			if err != nil {
+				BadRequest(ctx, err)
+				return
+			}
+
+		}
+	}
+
+	_, err = h.Restaran.UpdateRestaurant(ctx, &request)
+	if err != nil {
+		InternalServerError(ctx, err)
+		return
+	}
+
+	OK(ctx, nil)
 
 }
 
