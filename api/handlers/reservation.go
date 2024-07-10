@@ -3,10 +3,10 @@ package handlers
 import (
 	pb "api_get_way/genproto"
 	"fmt"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"net/http"
+	"time"
 )
 
 // CreateReservationHandler handles the creation of a new reservation.
@@ -43,9 +43,15 @@ func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("invalid status"))
 		return
 	}
-
+	time1, err := time.Parse(time.RFC3339, request.ReservationTime)
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("error parsing reservation time: %v", err))
+		return
+	}
+	request.ReservationTime = time1.Format(time.RFC3339)
 	resp, err := h.ReservationService.CreateReservation(ctx, &request)
 	if err != nil {
+		fmt.Println("+++++++++", err)
 		InternalServerError(ctx, err)
 		return
 	}
@@ -124,7 +130,7 @@ func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
 		return
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
 // GetByIdReservationHandler handles fetching a reservation by its ID.

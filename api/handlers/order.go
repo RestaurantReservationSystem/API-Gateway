@@ -49,7 +49,7 @@ func (h *Handler) CreateOrderHandler(ctx *gin.Context) {
 		return
 	}
 
-	Created(ctx, nil)
+	Created(ctx)
 }
 
 // UpdateOrderHandler handles the update of an order.
@@ -92,7 +92,7 @@ func (h *Handler) UpdateOrderHandler(ctx *gin.Context) {
 		return
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
 // DeleteOrderHandler handles the deletion of an order.
@@ -121,7 +121,7 @@ func (h *Handler) DeleteOrderHandler(ctx *gin.Context) {
 		return
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
 // GetByIdOrderHandler handles fetching an order by its ID.

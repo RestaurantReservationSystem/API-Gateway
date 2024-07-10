@@ -24,23 +24,14 @@ func RouterApi(con1 *grpc.ClientConn, con2 *grpc.ClientConn, con3 *grpc.ClientCo
 	reservationCon := genproto.NewReservationServiceClient(con2)
 	userCon := genproto.NewUserServiceClient(con3)
 	h := handlers.NewHandler(paymentCon, reservationCon, userCon)
-	restaurant := router.Group("/api/restaurant")
-	{
-		restaurant.POST("/create", h.CreateRestaurantHandler)
-		restaurant.GET("/get_all", h.GetAllRestaurantsHandler)
-		restaurant.GET("/get_by_id/:id", h.GetByIdRestaurantHandler)
-		restaurant.PUT("/update/:id")
-		restaurant.DELETE("/delete/:id", h.DeleteRestaurantHandler)
-
-	}
 
 	restaurant := router.Group("/api/restaurant")
 	{
 		restaurant.POST("create", h.CreateRestaurantHandler)
-		restaurant.GET("/get_all", h.GetAllReservationHandler)
-		restaurant.GET("/get_by_id/:id", h.GetByIdReservationHandler)
+		restaurant.GET("/get-all", h.GetAllRestaurantsHandler)
+		restaurant.GET("/get-by-id/:id", h.GetByIdRestaurantHandler)
 		restaurant.PUT("update/:id")
-		restaurant.PUT("delete/:id", h.DeleteRestaurantHandler)
+		restaurant.DELETE("delete/:id", h.DeleteRestaurantHandler)
 	}
 
 	reservation := router.Group("/api/reservation")
@@ -59,7 +50,6 @@ func RouterApi(con1 *grpc.ClientConn, con2 *grpc.ClientConn, con3 *grpc.ClientCo
 		menu.GET("/get_id/:id", h.GetByIdMenuHandler)
 		menu.PUT("/update/:id", h.UpdateMenuHandler)
 		menu.DELETE("/delete/:id", h.DeleteMenuHandler)
-		menu.DELETE("/delete/:id", h.DeletePaymentHandler)
 	}
 
 	order := router.Group("/api/order")
@@ -74,10 +64,11 @@ func RouterApi(con1 *grpc.ClientConn, con2 *grpc.ClientConn, con3 *grpc.ClientCo
 	payment := router.Group("/api/payment")
 	{
 		payment.POST("/create", h.CreatePaymentHandler)
-		payment.GET("/get_id/:id", h.Get)
+		payment.GET("/get_id/:id", h.GetByIdPaymentHandler)
 		payment.PUT("/update/:id", h.UpdatePaymentHandler)
 		payment.DELETE("/delete/:id", h.DeletePaymentHandler)
 		payment.GET("/get_all", h.GetAllPaymentHandler)
 	}
+	return router
 
 }

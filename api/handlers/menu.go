@@ -21,58 +21,52 @@ import (
 // @Router /api/menu/create [post]
 
 func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
-	// Initialize a protobuf request structure
 	request := pb.CreateMenuRequest{}
-
-	// Bind JSON request body to protobuf structure
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		BadRequest(ctx, err)
-
-		if Parse(request.RestaurantId) {
-			BadRequest(ctx, fmt.Errorf("id hato"))
-			return
-		}
-
-		// Perform additional validation if needed
-		if request.Description == "" || request.Name == "" {
-			BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
-			return
-		}
-
-		if Parse(request.RestaurantId) {
-			BadRequest(ctx, fmt.Errorf("id hato"))
-			return
-		}
-		if request.Price <= 0 {
-			BadRequest(ctx, fmt.Errorf("Price Xatto"))
-		}
-		_, err = h.ReservationService.CreateMenu(ctx, &request)
-
-		// Call the service method to create the menu item
-		_, err := h.ReservationService.CreateMenu(ctx, &request)
-		if err != nil {
-			InternalServerError(ctx, err)
-			return
-		}
-
-		// Respond with success message
-		Created(ctx, nil)
+		return
+	}
+	if Parse(request.RestaurantId) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
+		return
 	}
 
-	// UpdateMenuHandler handles the update of a menu item.
-	// @Summary Update Menu
-	// @Description Update an existing menu item
-	// @Tags Menu
-	// @Accept json
-	// @Security BearerAuth
-	// @Produce json
-	// @Param id path string true "Menu ID"
-	// @Param Update body genproto.UpdateMenuRequest true "Update Menu"
-	// @Success 200 {object} string
-	// @Failure 400 {object} string
-	// @Failure 500 {object} string
-	// @Router /api/menu/update/{id} [put]
+	if request.Description == "" || request.Name == "" {
+		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+		return
+	}
+
+	if Parse(request.RestaurantId) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
+		return
+	}
+	if request.Price < 0 {
+		BadRequest(ctx, fmt.Errorf("Price Xatto"))
+		return
+	}
+	_, err := h.ReservationService.CreateMenu(ctx, &request)
+	if err != nil {
+		InternalServerError(ctx, err)
+		return
+	}
+
+	Created(ctx)
 }
+
+// UpdateMenuHandler handles the update of a menu item.
+// @Summary Update Menu
+// @Description Update an existing menu item
+// @Tags Menu
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Menu ID"
+// @Param Update body genproto.UpdateMenuRequest true "Update Menu"
+// @Success 200 {object} string
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/menu/update/{id} [put]
+
 func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 	request := pb.UpdateMenuRequest{}
 
@@ -102,7 +96,7 @@ func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 		return
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
 // DeleteMenuHandler handles the deletion of a menu item.
@@ -126,8 +120,13 @@ func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
+	_, err := h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: id})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("error is ->bu id oldin ochiriladi"))
+		return
+	}
 
-	_, err := h.ReservationService.DeleteMenu(ctx, &pb.IdRequest{Id: id})
+	_, err = h.ReservationService.DeleteMenu(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
 		fmt.Println("++++++++++++", err)
@@ -135,7 +134,7 @@ func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 		return
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
 // GetByIdMenuHandler handles the request to fetch a menu item by its ID.
@@ -183,13 +182,32 @@ func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 
 func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 	request := pb.GetAllMenuRequest{}
-
-	err := ctx.ShouldBind(&request)
-
-	if err != nil {
-		fmt.Println("++++++++")
-		BadRequest(ctx, err)
+	if &(request.Name) == nil {
+		request.Name = " "
 	}
+	if &(request.Description) == nil {
+		request.Description = " "
+	}
+	if &(request.RestaurantId) == nil {
+		request.Description = " "
+	}
+	limit := ctx.Query("limit")
+	limit1, err := IsLimitOffsetValidate(limit)
+	if err != nil {
+		BadRequest(ctx, err)
+		return
+	}
+	offset := ctx.Query("offset")
+	offset1, err := IsLimitOffsetValidate(offset)
+	if err != nil {
+		BadRequest(ctx, err)
+		return
+	}
+	price := ctx.Query("price")
+	price1, err := IsLimitOffsetValidate(price)
+	request.LimitOffset.Limit = int64(limit1)
+	request.LimitOffset.Offset = int64(offset1)
+	request.Price = float32(price1)
 
 	if Parse(request.RestaurantId) {
 		BadRequest(ctx, fmt.Errorf("id hato"))

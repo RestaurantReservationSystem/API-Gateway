@@ -66,7 +66,7 @@ func (h *Handler) CreatePaymentHandler(ctx *gin.Context) {
 		InternalServerError(ctx, err)
 		return
 	}
-	Created(ctx, nil)
+	Created(ctx)
 }
 
 // UpdatePaymentHandler handles the update of a payment.
@@ -112,7 +112,7 @@ func (h *Handler) UpdatePaymentHandler(ctx *gin.Context) {
 		return
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
 // DeletePaymentHandler handles the deletion of a payment.
@@ -141,7 +141,7 @@ func (h *Handler) DeletePaymentHandler(ctx *gin.Context) {
 		return
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
 // GetByIdPaymentHandler handles fetching a payment by its ID.
