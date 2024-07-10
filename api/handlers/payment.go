@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 var allowedPaymentMethods = []string{"card", "payment", "cash"}
@@ -30,6 +31,18 @@ func isValidPaymentMethod(method string) bool {
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/payment/create [post]
+func IsValidOffset(offset string) (int, error) {
+	if offset == "" {
+		offset += "0"
+	}
+	offset1, err := strconv.Atoi(offset)
+	if err != nil {
+		return 0, err
+	}
+	return offset1, nil
+
+}
+
 func (h *Handler) CreatePaymentHandler(ctx *gin.Context) {
 	payment := pb.CreatePaymentRequest{}
 	err := ctx.ShouldBindJSON(&payment)

@@ -19,6 +19,7 @@ import (
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/menu/create [post]
+
 func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
 	// Initialize a protobuf request structure
 	request := pb.CreateMenuRequest{}
@@ -26,50 +27,55 @@ func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
 	// Bind JSON request body to protobuf structure
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		BadRequest(ctx, err)
-		return
+
+		if Parse(request.RestaurantId) {
+			BadRequest(ctx, fmt.Errorf("id hato"))
+			return
+		}
+
+		// Perform additional validation if needed
+		if request.Description == "" || request.Name == "" {
+			BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+			return
+		}
+
+		if Parse(request.RestaurantId) {
+			BadRequest(ctx, fmt.Errorf("id hato"))
+			return
+		}
+		if request.Price <= 0 {
+			BadRequest(ctx, fmt.Errorf("Price Xatto"))
+		}
+		_, err = h.ReservationService.CreateMenu(ctx, &request)
+
+		// Call the service method to create the menu item
+		_, err := h.ReservationService.CreateMenu(ctx, &request)
+		if err != nil {
+			InternalServerError(ctx, err)
+			return
+		}
+
+		// Respond with success message
+		Created(ctx, nil)
 	}
 
-	// Perform additional validation if needed
-	if request.Description == "" || request.Name == "" {
-		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
-		return
-	}
-
-	// Example: Additional custom validation using Parse function
-	if Parse(request.RestaurantId) {
-		BadRequest(ctx, fmt.Errorf("id hato"))
-		return
-	}
-	if request.Price <= 0 {
-		BadRequest(ctx, fmt.Errorf("Price Xatto"))
-	}
-
-	// Call the service method to create the menu item
-	_, err := h.ReservationService.CreateMenu(ctx, &request)
-	if err != nil {
-		InternalServerError(ctx, err)
-		return
-	}
-
-	// Respond with success message
-	Created(ctx, nil)
+	// UpdateMenuHandler handles the update of a menu item.
+	// @Summary Update Menu
+	// @Description Update an existing menu item
+	// @Tags Menu
+	// @Accept json
+	// @Security BearerAuth
+	// @Produce json
+	// @Param id path string true "Menu ID"
+	// @Param Update body genproto.UpdateMenuRequest true "Update Menu"
+	// @Success 200 {object} string
+	// @Failure 400 {object} string
+	// @Failure 500 {object} string
+	// @Router /api/menu/update/{id} [put]
 }
-
-// UpdateMenuHandler handles the update of a menu item.
-// @Summary Update Menu
-// @Description Update an existing menu item
-// @Tags Menu
-// @Accept json
-// @Security BearerAuth
-// @Produce json
-// @Param id path string true "Menu ID"
-// @Param Update body genproto.UpdateMenuRequest true "Update Menu"
-// @Success 200 {object} string
-// @Failure 400 {object} string
-// @Failure 500 {object} string
-// @Router /api/menu/update/{id} [put]
 func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 	request := pb.UpdateMenuRequest{}
+
 	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		BadRequest(ctx, err)
@@ -111,12 +117,12 @@ func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/menu/delete/{id} [delete]
+
 func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if Parse(id) {
 		fmt.Println("++++++++++++")
-
 		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
@@ -144,6 +150,7 @@ func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/menu/get_id/{id} [get]
+
 func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -173,13 +180,23 @@ func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/menu/get_all [get]
+
 func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 	request := pb.GetAllMenuRequest{}
 
 	err := ctx.ShouldBind(&request)
+
 	if err != nil {
 		fmt.Println("++++++++")
 		BadRequest(ctx, err)
+	}
+
+	if Parse(request.RestaurantId) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
+		return
+	}
+	if request.Name == "" || request.Description == "" {
+		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
 		return
 	}
 	if len(request.RestaurantId) > 0 {
@@ -189,8 +206,8 @@ func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 			return
 		}
 	}
-
 	resp, err := h.ReservationService.GetAllMenu(ctx, &request)
+
 	if err != nil {
 		InternalServerError(ctx, err)
 		return

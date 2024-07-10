@@ -11,184 +11,172 @@ import (
 	"github.com/google/uuid"
 )
 
-// CreateRestaurantHandler handles the creation of a new restaurant.
-// @Summary Create Restaurant
-// @Description Create a new restaurant
-// @Tags Restaurant
-// @Accept json
-// @Security BearerAuth
-// @Produce json
-// @Param Create body genproto.CreateRestaurantRequest true "Create Restaurant"
-// @Success 200 {object} genproto.RestaurantResponse
-// @Failure 400 {object} string
-// @Failure 500 {object} string
-// @Router /api/restaurant/create [post]
+// CreateRestaurantHandler 		handles the creation of a new user
+// @Summary 		Create Menu
+// @Description 	Create page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Create  body     pb.RegisterUserRequest  true   "Create"
+// @Success 		200   {string}      "Create Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/create [post]
+
 func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 	request := pb.CreateRestaurantRequest{}
 
-	if err := ctx.ShouldBind(&request); err != nil {
+	err := ctx.ShouldBind(&request)
+	if err != nil {
 		BadRequest(ctx, err)
-		return
 	}
 
 	if request.Name == "" || request.Address == "" || request.Description == "" {
-		BadRequest(ctx, fmt.Errorf("fields are incomplete"))
+		BadRequest(ctx, fmt.Errorf("fild lar to'liq toldirilmadi"))
 		return
 	}
-
 	if len(request.PhoneNumber) == 16 {
 		tel := strings.Split(request.PhoneNumber, "-")
+
 		for _, v := range tel {
-			if _, err := strconv.Atoi(string(v)); err != nil {
+			_, err = strconv.Atoi(string(v))
+			if err != nil {
 				BadRequest(ctx, err)
 				return
 			}
+
 		}
 	}
 
-	resp, err := h.ReservationService.CreateRestaurant(ctx, &request)
+	_, err = h.ReservationService.CreateRestaurant(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, resp)
+	Created(ctx, nil)
 }
 
-// UpdateRestaurantHandler handles the update of a restaurant.
-// @Summary Update Restaurant
-// @Description Update an existing restaurant
-// @Tags Restaurant
-// @Accept json
-// @Security BearerAuth
-// @Produce json
-// @Param id path string true "Restaurant ID"
-// @Param Update body genproto.UpdateRestaurantRequest true "Update Restaurant"
-// @Success 200 {object} genproto.RestaurantResponse
-// @Failure 400 {object} string
-// @Failure 500 {object} string
-// @Router /api/restaurant/update/{id} [put]
-func (h *Handler) UpdateRestaurantHandler(ctx *gin.Context) {
-	id := ctx.Param("id")
-	if _, err := uuid.Parse(id); err != nil {
-		BadRequest(ctx, err)
-		return
-	}
+// UpdateRestaurant 		handles the creation of a new user
+// @Summary 		Update Menu
+// @Description 	Update page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Update  body     pb.RegisterUserRequest  true   "Update"
+// @Success 		200   {string}      "Update Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/update/:id [put]
 
-	request := pb.UpdateRestaurantRequest{}
-	if err := ctx.ShouldBind(&request); err != nil {
-		BadRequest(ctx, err)
-		return
-	}
+func (h *Handler) UpdateRestaurant() {
 
-	resp, err := h.ReservationService.UpdateRestaurant(ctx, &pb.UpdateRestaurantRequest{
-		Id:          id,
-		Name:        request.Name,
-		Address:     request.Address,
-		Description: request.Description,
-		PhoneNumber: request.PhoneNumber,
-	})
-	if err != nil {
-		InternalServerError(ctx, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, resp)
 }
 
-// DeleteRestaurantHandler handles the deletion of a restaurant.
-// @Summary Delete Restaurant
-// @Description Delete an existing restaurant
-// @Tags Restaurant
-// @Accept json
-// @Security BearerAuth
-// @Produce json
-// @Param id path string true "Restaurant ID"
-// @Success 200 {object} string
-// @Failure 400 {object} string
-// @Failure 500 {object} string
-// @Router /api/restaurant/delete/{id} [delete]
+// DeleteRestaurantHandler 		handles the creation of a new user
+// @Summary 		Delete Menu
+// @Description 	Delete page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		Delete  body     pb.RegisterUserRequest  true   "Delete"
+// @Success 		200   {string}      "Delete Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/Delete/:id [put]
+
 func (h *Handler) DeleteRestaurantHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
-	if _, err := uuid.Parse(id); err != nil {
+
+	_, err := uuid.Parse(id)
+
+	if err != nil {
 		BadRequest(ctx, err)
 		return
 	}
+	_, err = h.ReservationService.DeleteRestaurant(ctx, &pb.IdRequest{Id: id})
 
-	if _, err := h.ReservationService.DeleteRestaurant(ctx, &pb.IdRequest{Id: id}); err != nil {
+	if err != nil {
 		InternalServerError(ctx, err)
-		return
 	}
 
 	OK(ctx, nil)
 }
 
-// GetByIdRestaurantHandler handles fetching a restaurant by its ID.
-// @Summary Get Restaurant by ID
-// @Description Get a restaurant by its ID
-// @Tags Restaurant
-// @Accept json
-// @Security BearerAuth
-// @Produce json
-// @Param id path string true "Restaurant ID"
-// @Success 200 {object} genproto.RestaurantResponse
-// @Failure 400 {object} string
-// @Failure 500 {object} string
-// @Router /api/restaurant/get-by-id/{id} [get]
+// GetByIdRestaurantHandler 		handles the creation of a new user
+// @Summary 		GetId Menu
+// @Description 	GetId page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		GetId  body     pb.RegisterUserRequest  true   "GetId"
+// @Success 		200   {string}      "GetId Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/get_by_id/:id [get]
+
 func (h *Handler) GetByIdRestaurantHandler(ctx *gin.Context) {
+
 	id := ctx.Param("id")
-	if _, err := uuid.Parse(id); err != nil {
+
+	_, err := uuid.Parse(id)
+
+	if err != nil {
 		BadRequest(ctx, err)
-		return
 	}
 
 	resp, err := h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: id})
+
 	if err != nil {
 		InternalServerError(ctx, err)
-		return
 	}
 
 	ctx.JSON(http.StatusOK, resp)
 }
 
-// GetAllRestaurantsHandler handles the retrieval of all restaurants.
-// @Summary Get All Restaurants
-// @Description Retrieves a list of all restaurants
-// @Tags Restaurant
-// @Accept json
-// @Security BearerAuth
-// @Produce json
-// @Param Get query genproto.GetAllRestaurantRequest true "Get All Restaurants"
-// @Success 200 {object} genproto.RestaurantsResponse
-// @Failure 400 {object} string
-// @Failure 500 {object} string
-// @Router /api/restaurant/get-all [get]
+// GetAllRestaurantsHandler 		handles the creation of a new user
+// @Summary 		GetAll Menu
+// @Description 	GetAll page
+// @Tags 			Menu
+// @Accept  		json
+// @Security  		BearerAuth
+// @Produce  		json
+// @Param   		GetAll  body     pb.RegisterUserRequest  true   "GetAll"
+// @Success 		200   {string}      "GetAll Successful"
+// @Failure 		401   {string}   string    "Error while Created"
+// @Router 			/api/restaurant/get_all [get]
+
 func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
+
 	request := pb.GetAllRestaurantRequest{}
-	if err := ctx.ShouldBind(&request); err != nil {
+
+	err := ctx.ShouldBind(&request)
+
+	if err != nil {
 		BadRequest(ctx, err)
-		return
 	}
 
 	if request.Address == "" || request.Description == "" || request.Name == "" {
-		BadRequest(ctx, fmt.Errorf("fields are incomplete"))
-		return
+		BadRequest(ctx, fmt.Errorf("malumot tioliq emas"))
 	}
 
 	if len(request.PhoneNumber) == 16 {
 		tel := strings.Split(request.PhoneNumber, "-")
+
 		for _, v := range tel {
-			if _, err := strconv.Atoi(string(v)); err != nil {
+			_, err = strconv.Atoi(string(v))
+			if err != nil {
 				BadRequest(ctx, err)
 				return
 			}
+
 		}
 	}
 
 	resp, err := h.ReservationService.GetAllRestaurants(ctx, &request)
+
 	if err != nil {
 		InternalServerError(ctx, err)
-		return
 	}
 
 	ctx.JSON(http.StatusOK, resp)

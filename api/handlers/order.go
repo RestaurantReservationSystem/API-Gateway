@@ -38,6 +38,10 @@ func (h *Handler) CreateOrderHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
+	if Parse(request.ReservationId) || Parse(request.MenuItemId) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
+		return
+	}
 
 	_, err = h.ReservationService.CreateOrder(ctx, &request)
 	if err != nil {
@@ -141,6 +145,7 @@ func (h *Handler) GetByIdOrderHandler(ctx *gin.Context) {
 	}
 
 	resp, err := h.ReservationService.GetByIdOrder(ctx, &pb.IdRequest{Id: id})
+
 	if err != nil {
 		InternalServerError(ctx, err)
 		return
@@ -169,6 +174,9 @@ func (h *Handler) GetAllOrderHandler(ctx *gin.Context) {
 		BadRequest(ctx, err)
 		return
 	}
+	if request.Quantity == "" {
+		BadRequest(ctx, err)
+	}
 
 	if Parse(request.ReservationId) || Parse(request.MenuItemId) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
@@ -176,6 +184,7 @@ func (h *Handler) GetAllOrderHandler(ctx *gin.Context) {
 	}
 
 	resp, err := h.ReservationService.GetAllOrder(ctx, &request)
+
 	if err != nil {
 		InternalServerError(ctx, err)
 		return

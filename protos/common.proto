@@ -10,3 +10,4 @@ package  protos;
 message  Void{}
 message  Filter{int64  limit=1;int64 offset=2;}
 message  IdRequest{string Id=1;}
+message  Void1{}
