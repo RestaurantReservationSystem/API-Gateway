@@ -1,0 +1,1064 @@
+basePath: /
+definitions:
+  genproto.CreateMenuRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      restaurant_id:
+        type: string
+    type: object
+  genproto.CreateOrderRequest:
+    properties:
+      menu_item_id:
+        type: string
+      quantity:
+        type: string
+      reservation_id:
+        type: string
+    type: object
+  genproto.CreatePaymentRequest:
+    properties:
+      amount:
+        type: number
+      payment_method:
+        type: string
+      payment_status:
+        type: string
+      reservation_id:
+        type: string
+    type: object
+  genproto.CreateReservationRequest:
+    properties:
+      reservation_time:
+        type: string
+      restaurant_id:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  genproto.CreateRestaurantRequest:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  genproto.Filter:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+    type: object
+  genproto.MenuResponse:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      restaurant_id:
+        type: string
+    type: object
+  genproto.MenusResponse:
+    properties:
+      menus:
+        items:
+          $ref: '#/definitions/genproto.MenuResponse'
+        type: array
+    type: object
+  genproto.OrderResponse:
+    properties:
+      menu_item_id:
+        type: string
+      quantity:
+        type: string
+      reservation_id:
+        type: string
+    type: object
+  genproto.OrdersResponse:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/genproto.OrderResponse'
+        type: array
+    type: object
+  genproto.PaymentResponse:
+    properties:
+      amount:
+        type: number
+      id:
+        type: string
+      payment_method:
+        type: string
+      payment_status:
+        type: string
+      reservation_id:
+        type: string
+    type: object
+  genproto.PaymentsResponse:
+    properties:
+      payments:
+        items:
+          $ref: '#/definitions/genproto.PaymentResponse'
+        type: array
+    type: object
+  genproto.ReservationResponse:
+    properties:
+      reservation_time:
+        type: string
+      restaurant_id:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  genproto.ReservationsResponse:
+    properties:
+      Reservations:
+        items:
+          $ref: '#/definitions/genproto.ReservationResponse'
+        type: array
+    type: object
+  genproto.RestaurantResponse:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  genproto.RestaurantsResponse:
+    properties:
+      restaurants:
+        items:
+          $ref: '#/definitions/genproto.RestaurantResponse'
+        type: array
+    type: object
+  genproto.UpdateMenuRequest:
+    properties:
+      Id:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      restaurant_id:
+        type: string
+    type: object
+  genproto.UpdateOrderRequest:
+    properties:
+      Id:
+        type: string
+      menu_item_id:
+        type: string
+      quantity:
+        type: string
+      reservation_id:
+        type: string
+    type: object
+  genproto.UpdatePaymentRequest:
+    properties:
+      Id:
+        type: string
+      amount:
+        type: number
+      payment_method:
+        type: string
+      payment_status:
+        type: string
+      reservation_id:
+        type: string
+    type: object
+  genproto.UpdateReservationRequest:
+    properties:
+      Id:
+        type: string
+      reservation_time:
+        type: string
+      restaurant_id:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  genproto.UpdateRestaurantRequest:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: APi service
+  version: "1.0"
+paths:
+  /api/menu/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new menu item
+      parameters:
+      - description: Create Menu
+        in: body
+        name: Create
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.CreateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create Menu
+      tags:
+      - Menu
+  /api/menu/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing menu item
+      parameters:
+      - description: Menu ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete Menu
+      tags:
+      - Menu
+  /api/menu/get_all:
+    get:
+      consumes:
+      - application/json
+      description: Get all menu items
+      parameters:
+      - in: query
+        name: description
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: price
+        type: number
+      - in: query
+        name: restaurant_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.MenusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get All Menus
+      tags:
+      - Menu
+  /api/menu/get_id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a menu item by its ID
+      parameters:
+      - description: Menu ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.MenuResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get Menu by ID
+      tags:
+      - Menu
+  /api/menu/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update an existing menu item
+      parameters:
+      - description: Menu ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Menu
+        in: body
+        name: Update
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.UpdateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update Menu
+      tags:
+      - Menu
+  /api/order/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new order
+      parameters:
+      - description: Create Order
+        in: body
+        name: Create
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create Order
+      tags:
+      - Order
+  /api/order/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete Order
+      tags:
+      - Order
+  /api/order/get_all:
+    get:
+      consumes:
+      - application/json
+      description: Get all orders
+      parameters:
+      - in: query
+        name: menu_item_id
+        type: string
+      - in: query
+        name: quantity
+        type: string
+      - in: query
+        name: reservation_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.OrdersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get All Orders
+      tags:
+      - Order
+  /api/order/get_id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an order by its ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.OrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get Order by ID
+      tags:
+      - Order
+  /api/order/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update an existing order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Order
+        in: body
+        name: Update
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.UpdateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update Order
+      tags:
+      - Order
+  /api/payment/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new payment
+      parameters:
+      - description: Create Payment
+        in: body
+        name: Create
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.CreatePaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create Payment
+      tags:
+      - Payment
+  /api/payment/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing payment
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete Payment
+      tags:
+      - Payment
+  /api/payment/get_all:
+    get:
+      consumes:
+      - application/json
+      description: Get all payments
+      parameters:
+      - in: query
+        name: amount
+        type: number
+      - in: query
+        name: payment_method
+        type: string
+      - in: query
+        name: payment_status
+        type: string
+      - in: query
+        name: reservation_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.PaymentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get All Payments
+      tags:
+      - Payment
+  /api/payment/get_id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a payment by its ID
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.PaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get Payment by ID
+      tags:
+      - Payment
+  /api/payment/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update an existing payment
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Payment
+        in: body
+        name: Update
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.UpdatePaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update Payment
+      tags:
+      - Payment
+  /api/reservation/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new reservation
+      parameters:
+      - description: Create Reservation
+        in: body
+        name: Create
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.CreateReservationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.ReservationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create Reservation
+      tags:
+      - Reservation
+  /api/reservation/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing reservation
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete Reservation
+      tags:
+      - Reservation
+  /api/reservation/get_all:
+    get:
+      consumes:
+      - application/json
+      description: Get all reservations
+      parameters:
+      - in: query
+        name: reservation_time
+        type: string
+      - in: query
+        name: restaurant_id
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: user_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.ReservationsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get All Reservations
+      tags:
+      - Reservation
+  /api/reservation/get_id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a reservation by its ID
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.ReservationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get Reservation by ID
+      tags:
+      - Reservation
+  /api/reservation/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update an existing reservation
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Reservation
+        in: body
+        name: Update
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.UpdateReservationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.ReservationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update Reservation
+      tags:
+      - Reservation
+  /api/restaurant/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new restaurant
+      parameters:
+      - description: Create Restaurant
+        in: body
+        name: Create
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.CreateRestaurantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.RestaurantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create Restaurant
+      tags:
+      - Restaurant
+  /api/restaurant/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing restaurant
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete Restaurant
+      tags:
+      - Restaurant
+  /api/restaurant/get-all:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all restaurants
+      parameters:
+      - in: query
+        name: address
+        type: string
+      - in: query
+        name: description
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: phone_number
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.RestaurantsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get All Restaurants
+      tags:
+      - Restaurant
+  /api/restaurant/get-by-id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a restaurant by its ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.RestaurantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get Restaurant by ID
+      tags:
+      - Restaurant
+  /api/restaurant/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update an existing restaurant
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Restaurant
+        in: body
+        name: Update
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.UpdateRestaurantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.RestaurantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update Restaurant
+      tags:
+      - Restaurant
+swagger: "2.0"

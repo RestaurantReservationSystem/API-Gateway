@@ -44,4 +44,110 @@ service  ReservationService{
   rpc DeleteReservation(IdRequest)returns(Void);
   rpc GetByIdReservation(IdRequest)returns(ReservationResponse);
   rpc GetAllReservation(GetAllReservationRequest)returns(ReservationsResponse);
+  rpc CreateOrder(CreateOrderRequest)returns(Void);
+  rpc UpdateOrder(UpdateOrderRequest)returns(Void);
+  rpc DeleteOrder(IdRequest)returns(Void);
+  rpc GetByIdOrder(IdRequest)returns(OrderResponse);
+  rpc GetAllOrder(GetAllOrderRequest)returns(OrdersResponse);
+  rpc CreateRestaurant (CreateRestaurantRequest) returns (Void);
+  rpc GetByIdRestaurant (IdRequest) returns (RestaurantResponse);
+  rpc GetAllRestaurants(GetAllRestaurantRequest)returns(RestaurantsResponse);
+  rpc UpdateRestaurant (UpdateRestaurantRequest) returns (Void);
+  rpc DeleteRestaurant (IdRequest) returns (Void);
+  rpc CreateMenu(CreateMenuRequest)returns(Void);
+  rpc UpdateMenu(UpdateMenuRequest)returns(Void);
+  rpc DeleteMenu(IdRequest)returns(Void);
+  rpc GetByIdMenu(IdRequest)returns(MenuResponse);
+  rpc GetAllMenu(GetAllMenuRequest)returns(MenusResponse);
+}
+
+
+message  CreateOrderRequest{
+  string  reservation_id=1;
+  string menu_item_id=2;
+  string  quantity=3;
+
+}
+message  UpdateOrderRequest{
+  string  Id=1;
+  string  reservation_id=2;
+  string menu_item_id=3;
+  string  quantity=4;
+}
+message  OrderResponse{
+  string  reservation_id=1;
+  string menu_item_id=2;
+  string quantity=3;
+}
+message  OrdersResponse{
+  repeated   OrderResponse orders=1;
+}
+message  GetAllOrderRequest{
+  string  reservation_id=1;
+  string menu_item_id=2;
+  string quantity=3;
+  Filter limitOffset=5;
+}
+message RestaurantResponse {
+  string name = 2;
+  string address = 3;
+  string phone_number = 4;
+  string description = 5;
+}
+message GetAllRestaurantRequest{
+  string name = 2;
+  string address = 3;
+  string phone_number = 4;
+  string description = 5;
+  Filter limitOffset=6;
+
+}
+message CreateRestaurantRequest {
+  string name = 1;
+  string address = 2;
+  string phone_number = 3;
+  string description = 4;
+}
+
+message UpdateRestaurantRequest {
+  string id = 1;
+  string name = 2;
+  string address = 3;
+  string phone_number = 4;
+  string description = 5;
+}
+message  RestaurantsResponse{
+  repeated RestaurantResponse restaurants=1;
+}
+
+
+message  CreateMenuRequest{
+  string  restaurant_id=1;
+  string name=2;
+  string description=3;
+  float  price=4;
+
+}
+message  UpdateMenuRequest{
+  string  Id=1;
+  string  restaurant_id=2;
+  string name=3;
+  string description=4;
+  float  price=5;
+}
+message  MenuResponse{
+  string  restaurant_id=1;
+  string name=2;
+  string description=3;
+  float  price=4;
+}
+message  MenusResponse{
+  repeated   MenuResponse menus=1;
+}
+message  GetAllMenuRequest{
+  string  restaurant_id=1;
+  string name=2;
+  string description=3;
+  float  price=4;
+  Filter limitOffset=5;
 }
