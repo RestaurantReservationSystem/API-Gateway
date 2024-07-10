@@ -26,9 +26,10 @@ import (
 func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 	request := pb.CreateRestaurantRequest{}
 
-	err := ctx.ShouldBind(&request)
+	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		BadRequest(ctx, err)
+		return
 	}
 
 	if request.Name == "" || request.Address == "" || request.Description == "" {
@@ -39,7 +40,7 @@ func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 		tel := strings.Split(request.PhoneNumber, "-")
 
 		for _, v := range tel {
-			_, err = strconv.Atoi(string(v))
+			_, err = strconv.Atoi(v)
 			if err != nil {
 				BadRequest(ctx, err)
 				return
@@ -48,13 +49,13 @@ func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 		}
 	}
 
-	_, err = h.Restaran.CreateRestaurant(ctx, &request)
+	_, err = h.ReservationService.CreateRestaurant(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
 		return
 	}
 
-	Created(ctx, nil)
+	Created(ctx)
 }
 
 // UpdateRestaurant 		handles the creation of a new user
@@ -69,45 +70,7 @@ func (h *Handler) CreateRestaurantHandler(ctx *gin.Context) {
 // @Failure 		401   {string}   string    "Error while Created"
 // @Router 			/api/restaurant/update/:id [put]
 
-func (h *Handler) UpdateRestaurant(ctx *gin.Context) {
-	request := pb.UpdateRestaurantRequest{}
-
-	err := ctx.ShouldBind(&request)
-
-	if err != nil {
-		BadRequest(ctx, err)
-	}
-
-	if Parse(request.Id) {
-		BadRequest(ctx, fmt.Errorf("ifd hato"))
-		return
-	}
-
-	if request.Name == "" || request.Address == "" {
-		BadRequest(ctx, fmt.Errorf("malumiot toliq emas"))
-		return
-	}
-
-	if len(request.PhoneNumber) == 16 {
-		tel := strings.Split(request.PhoneNumber, "-")
-
-		for _, v := range tel {
-			_, err = strconv.Atoi(string(v))
-			if err != nil {
-				BadRequest(ctx, err)
-				return
-			}
-
-		}
-	}
-
-	_, err = h.Restaran.UpdateRestaurant(ctx, &request)
-	if err != nil {
-		InternalServerError(ctx, err)
-		return
-	}
-
-	OK(ctx, nil)
+func (h *Handler) UpdateRestaurant() {
 
 }
 
@@ -125,6 +88,7 @@ func (h *Handler) UpdateRestaurant(ctx *gin.Context) {
 
 func (h *Handler) DeleteRestaurantHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
+	fmt.Println("+++++++++++++")
 
 	_, err := uuid.Parse(id)
 
@@ -132,13 +96,17 @@ func (h *Handler) DeleteRestaurantHandler(ctx *gin.Context) {
 		BadRequest(ctx, err)
 		return
 	}
-	_, err = h.Restaran.DeleteRestaurant(ctx, &pb.IdRequest{Id: id})
+	_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: id})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("bu id oldin ochiriligan"))
+	}
+	_, err = h.ReservationService.DeleteRestaurant(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
 		InternalServerError(ctx, err)
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
 // GetByIdRestaurantHandler 		handles the creation of a new user
@@ -163,7 +131,7 @@ func (h *Handler) GetByIdRestaurantHandler(ctx *gin.Context) {
 		BadRequest(ctx, err)
 	}
 
-	resp, err := h.Restaran.GetByIdRestaurant(ctx, &pb.IdRequest{Id: id})
+	resp, err := h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
 		InternalServerError(ctx, err)
@@ -187,34 +155,58 @@ func (h *Handler) GetByIdRestaurantHandler(ctx *gin.Context) {
 func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
 
 	request := pb.GetAllRestaurantRequest{}
-
-	err := ctx.ShouldBind(&request)
-
+	request.Name = ctx.Param("name")
+	if &request.Name == nil {
+		request.Name = ""
+	}
+	if &request.PhoneNumber == nil {
+		request.PhoneNumber = ""
+	}
+	if &request.Address == nil {
+		request.Address = ""
+	}
+	if &request.Description == nil {
+		request.Description = ""
+	}
+	limit := ctx.Param("limit")
+	limit1, err := IsLimitValidate(limit)
 	if err != nil {
 		BadRequest(ctx, err)
+		return
 	}
+	request.LimitOffset.Limit = int64(limit1)
+	fmt.Println("+++++++++", limit1)
 
-	if request.Address == "" || request.Description == "" || request.Name == "" {
-		BadRequest(ctx, fmt.Errorf("malumot tioliq emas"))
-	}
-
-	if len(request.PhoneNumber) == 16 {
-		tel := strings.Split(request.PhoneNumber, "-")
-
-		for _, v := range tel {
-			_, err = strconv.Atoi(string(v))
-			if err != nil {
-				BadRequest(ctx, err)
-				return
-			}
-
-		}
-	}
-
-	resp, err := h.Restaran.GetAllRestaurants(ctx, &request)
-
+	offset := ctx.Param("offset")
+	offset1, err := IsOffsetValidate(offset)
 	if err != nil {
+		BadRequest(ctx, err)
+		return
+	}
+	request.LimitOffset.Offset = int64(offset1)
+	fmt.Println("+++++++++", offset1)
+
+	//if len(request.PhoneNumber) > 0 {
+	//	if len(request.PhoneNumber) == 16 {
+	//		tel := strings.Split(request.PhoneNumber, "-")
+	//
+	//		for _, v := range tel {
+	//			_, err = strconv.Atoi(string(v))
+	//			if err != nil {
+	//				BadRequest(ctx, err)
+	//				return
+	//			}
+	//
+	//		}
+	//	}
+	//}
+
+	resp, err := h.ReservationService.GetAllRestaurants(ctx, &request)
+	fmt.Println("+++++++++++")
+	if err != nil {
+		fmt.Println("++++++++", err)
 		InternalServerError(ctx, err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, resp)

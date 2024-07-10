@@ -3,144 +3,166 @@ package handlers
 import (
 	pb "api_get_way/genproto"
 	"fmt"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-// CreateMenuHandler 		handles the creation of a new user
-// @Summary 		Create Menu
-// @Description 	Create page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Create  body     pb.RegisterUserRequest  true   "Create"
-// @Success 		200   {string}      "Create Successful"
-// @Failure 		401   {string}   string    "Error while Created"
-// @Router 			/api/menu/create [post]
+// CreateMenuHandler handles the creation of a new menu item.
+// @Summary Create Menu
+// @Description Create a new menu item
+// @Tags Menu
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param Create body genproto.CreateMenuRequest true "Create Menu"
+// @Success 200 {object} string
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/menu/create [post]
 
 func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
+	// Initialize a protobuf request structure
 	request := pb.CreateMenuRequest{}
 
-	err := ctx.ShouldBind(&request)
-
-	if err != nil {
+	// Bind JSON request body to protobuf structure
+	if err := ctx.ShouldBindJSON(&request); err != nil {
 		BadRequest(ctx, err)
+
+		if Parse(request.RestaurantId) {
+			BadRequest(ctx, fmt.Errorf("id hato"))
+			return
+		}
+
+		// Perform additional validation if needed
+		if request.Description == "" || request.Name == "" {
+			BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+			return
+		}
+
+		if Parse(request.RestaurantId) {
+			BadRequest(ctx, fmt.Errorf("id hato"))
+			return
+		}
+		if request.Price <= 0 {
+			BadRequest(ctx, fmt.Errorf("Price Xatto"))
+		}
+		_, err = h.ReservationService.CreateMenu(ctx, &request)
+
+		// Call the service method to create the menu item
+		_, err := h.ReservationService.CreateMenu(ctx, &request)
+		if err != nil {
+			InternalServerError(ctx, err)
+			return
+		}
+
+		// Respond with success message
+		Created(ctx)
 	}
 
-	if Parse(request.RestaurantId){
-		BadRequest(ctx,fmt.Errorf("id hato"))
-		return
-	}
-
-	if request.Description == "" || request.Name == "" {
-		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
-		return
-	}
-
-	_, err = h.Menu.CreateMenu(ctx, &request)
-
-	if err != nil {
-		InternalServerError(ctx, err)
-		return
-	}
-
-	Created(ctx, nil)
+	// UpdateMenuHandler handles the update of a menu item.
+	// @Summary Update Menu
+	// @Description Update an existing menu item
+	// @Tags Menu
+	// @Accept json
+	// @Security BearerAuth
+	// @Produce json
+	// @Param id path string true "Menu ID"
+	// @Param Update body genproto.UpdateMenuRequest true "Update Menu"
+	// @Success 200 {object} string
+	// @Failure 400 {object} string
+	// @Failure 500 {object} string
+	// @Router /api/menu/update/{id} [put]
 }
-
-// UpdateMenuHandler 		handles the creation of a new user
-// @Summary 		Update Menu
-// @Description 	Update page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Create  body     pb.RegisterUserRequest  true   "Update"
-// @Success 		200   {string}      "Create Successful"
-// @Failure 		401   {string}   string    "Error while Created"
-// @Router 			/api/menu/update/:id [PUT]
-
 func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
-
 	request := pb.UpdateMenuRequest{}
 
-	err := ctx.ShouldBind(&request)
+	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		BadRequest(ctx, err)
 		return
 	}
+	request.Id = ctx.Param("id")
 
-	if Parse(request.RestaurantId) || Parse(request.Id){
-		BadRequest(ctx,fmt.Errorf("id hato"))
+	if Parse(request.RestaurantId) || Parse(request.Id) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
 
 	if request.Name == "" || request.Description == "" {
-		BadRequest(ctx, fmt.Errorf("maliumot toliq emas"))
+		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
 		return
 	}
 
-	_, err = h.Menu.UpdateMenu(ctx, &request)
+	_, err = h.ReservationService.UpdateMenu(ctx, &request)
 
 	if err != nil {
+		fmt.Println("++++++++++++++")
+
 		InternalServerError(ctx, err)
 		return
 	}
 
-	OK(ctx, nil)
+	OK(ctx)
 }
 
-// DeleteMenuHandler 		handles the creation of a new user
-// @Summary 		Delete Menu
-// @Description 	Delete page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Create  body     pb.RegisterUserRequest  true   "Delete"
-// @Success 		200   {string}      "Delete Successful"
-// @Failure 		401   {string}   string    "Error while Delete"
-// @Router 			/api/menu/delete/:id [DELETE]
+// DeleteMenuHandler handles the deletion of a menu item.
+// @Summary Delete Menu
+// @Description Delete an existing menu item
+// @Tags Menu
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Menu ID"
+// @Success 200 {object} string
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/menu/delete/{id} [delete]
 
 func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	if Parse(id){
-		BadRequest(ctx,fmt.Errorf("id hato"))
+	if Parse(id) {
+		fmt.Println("++++++++++++")
+		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
+	_, err := h.ReservationService.GetByIdReservation(ctx, &pb.IdRequest{Id: id})
+	if err != nil {
+		BadRequest(ctx, err)
+	}
 
-	_, err := h.Menu.DeleteMenu(ctx, &pb.IdRequest{Id: id})
+	_, err = h.ReservationService.DeleteMenu(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
+		fmt.Println("++++++++++++", err)
 		InternalServerError(ctx, err)
 		return
 	}
 
-	Created(ctx, nil)
+	OK(ctx)
 }
 
-// GetByIdMenuHandler 		handles the creation of a new user
-// @Summary 		GetById Menu
-// @Description 	GetById page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Create  body     pb.RegisterUserRequest  true   "GET"
-// @Success 		200   {string}      "Get Successful"
-// @Failure 		401   {string}   string    "Error while Get"
-// @Router 			/api/menu/get_id/:id [DELETE]
+// GetByIdMenuHandler handles the request to fetch a menu item by its ID.
+// @Summary Get Menu by ID
+// @Description Get a menu item by its ID
+// @Tags Menu
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Menu ID"
+// @Success 200 {object} genproto.MenuResponse
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/menu/get_id/{id} [get]
 
 func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	if Parse(id){
-		BadRequest(ctx,fmt.Errorf("id hato"))
+	if Parse(id) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
-	resp, err := h.Menu.GetByIdMenu(ctx, &pb.IdRequest{Id: id})
+	resp, err := h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
 		InternalServerError(ctx, err)
@@ -148,42 +170,47 @@ func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, resp)
-
 }
 
-// GetAllMenuHandler 		handles the creation of a new user
-// @Summary 		GetAll Menu
-// @Description 	GetAll page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Create  body     pb.RegisterUserRequest  true   "GET"
-// @Success 		200   {string}      "Get Successful"
-// @Failure 		401   {string}   string    "Error while Get"
-// @Router 			/api/menu/get_all/ [DELETE]
-
+// GetAllMenuHandler handles the request to fetch all menu items.
+// @Summary Get All Menus
+// @Description Get all menu items
+// @Tags Menu
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param request query genproto.GetAllMenuRequest true "Get All Menus"
+// @Success 200 {object} genproto.MenusResponse
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/menu/get_all [get]
 
 func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
-
 	request := pb.GetAllMenuRequest{}
 
 	err := ctx.ShouldBind(&request)
 
 	if err != nil {
+		fmt.Println("++++++++")
 		BadRequest(ctx, err)
 	}
 
-	if Parse(request.RestaurantId){
-		BadRequest(ctx,fmt.Errorf("id hato"))
+	if Parse(request.RestaurantId) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
 	if request.Name == "" || request.Description == "" {
 		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
 		return
 	}
+	if len(request.RestaurantId) > 0 {
 
-	resp, err := h.Menu.GetAllMenu(ctx, &request)
+		if Parse(request.RestaurantId) {
+			BadRequest(ctx, fmt.Errorf("id hato"))
+			return
+		}
+	}
+	resp, err := h.ReservationService.GetAllMenu(ctx, &request)
 
 	if err != nil {
 		InternalServerError(ctx, err)
