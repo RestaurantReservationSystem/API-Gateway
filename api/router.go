@@ -55,6 +55,5 @@ func RouterApi(hand *handlers.Handler) {
 		payment.DELETE("/delete/:id")
 		payment.GET("/get_all")
 
-		
 	}
 }

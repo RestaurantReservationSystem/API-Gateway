@@ -1,0 +1,3 @@
+[submodule "gRPS-proto"]
+	path = gRPS-proto
+	url = git@github.com:RestaurantReservationSystem/gRPS-proto.git

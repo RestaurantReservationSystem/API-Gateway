@@ -1,16 +1,13 @@
 package handlers
 
-import (
-	"api_get_way/genproto"
-)
+import "api_get_way/genproto/auth"
+
+
 
 type Handler struct {
-	PaymentService     genproto.PaymentServiceClient
-	ReservationService genproto.ReservationServiceClient
-	UsersService       genproto.UserServiceClient
-	Restaran           genproto.RestaurantServiceClient
-	Order              genproto.OrderServiceClient
-	Menu               genproto.MenuServiceClient
+	PaymentService     
+	ReservationService rese
+	UsersService       auth.UserServiceClient
 }
 
 func NewHandler(py genproto.PaymentServiceClient, rs genproto.ReservationServiceClient, user genproto.UserServiceClient) *Handler {
