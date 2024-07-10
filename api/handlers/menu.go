@@ -3,8 +3,9 @@ package handlers
 import (
 	pb "api_get_way/genproto"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // CreateMenuHandler handles the creation of a new menu item.
@@ -44,9 +45,13 @@ func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
 			return
 		}
 		if request.Price <= 0 {
-			BadRequest(ctx, fmt.Errorf("Price Xatto"))
+			BadRequest(ctx, fmt.Errorf("hatolik price"))
+			return
 		}
 		_, err = h.ReservationService.CreateMenu(ctx, &request)
+		if err != nil {
+			InternalServerError(ctx,err)
+		}
 
 		// Call the service method to create the menu item
 		_, err := h.ReservationService.CreateMenu(ctx, &request)
