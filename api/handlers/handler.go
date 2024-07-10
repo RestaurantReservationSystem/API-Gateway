@@ -1,18 +1,19 @@
 package handlers
 
-import "api_get_way/genproto/auth"
-
-
+import (
+	"api_get_way/genproto"
+)
 
 type Handler struct {
-	PaymentService     
-	ReservationService rese
-	UsersService       auth.UserServiceClient
+	PaymentService     genproto.PaymentServiceClient
+	ReservationService genproto.ReservationServiceClient
+	UsersService       genproto.UserServiceClient
 }
 
-func NewHandler(py genproto.PaymentServiceClient, rs genproto.ReservationServiceClient, user genproto.UserServiceClient) *Handler {
+func NewHandler(payment genproto.PaymentServiceClient, reservation genproto.ReservationServiceClient, user genproto.UserServiceClient) *Handler {
 	return &Handler{
-		PaymentService:     py,
-		ReservationService: rs,
-		UsersService:       user}
+		PaymentService:     payment,
+		ReservationService: reservation,
+		UsersService:       user,
+	}
 }

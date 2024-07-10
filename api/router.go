@@ -1,59 +1,74 @@
 package api
 
 import (
+	_ "api_get_way/api/docs"
 	"api_get_way/api/handlers"
-	"api_get_way/api/middleware"
-
+	genproto "api_get_way/genproto"
 	"github.com/gin-gonic/gin"
+	_ "github.com/swaggo/files" // Import swaggo files handler
+	files "github.com/swaggo/files"
+	_ "github.com/swaggo/gin-swagger" // Import gin-swagger middleware
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"google.golang.org/grpc"
 )
 
-func RouterApi(hand *handlers.Handler) {
+// @tite APi service
+// @version 1.0
+// @description APi service
+// @host localhost:8080
+// @BasePath /
+func RouterApi(con1 *grpc.ClientConn, con2 *grpc.ClientConn, con3 *grpc.ClientConn) *gin.Engine {
 	router := gin.Default()
-	router.Use(middleware.MiddleWare())
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
+	paymentCon := genproto.NewPaymentServiceClient(con1)
+	reservationCon := genproto.NewReservationServiceClient(con2)
+	userCon := genproto.NewUserServiceClient(con3)
+	h := handlers.NewHandler(paymentCon, reservationCon, userCon)
 
 	restaurant := router.Group("/api/restaurant")
 	{
-		restaurant.POST("create")
-		restaurant.GET("/get_all")
-		restaurant.GET("/get_by_id/:id")
+		restaurant.POST("create", h.CreateRestaurantHandler)
+		restaurant.GET("/get-all", h.GetAllRestaurantsHandler)
+		restaurant.GET("/get-by-id/:id", h.GetByIdRestaurantHandler)
 		restaurant.PUT("update/:id")
-		restaurant.PUT("delete/:id")
+		restaurant.DELETE("delete/:id", h.DeleteRestaurantHandler)
 	}
 
 	reservation := router.Group("/api/reservation")
 	{
-		reservation.POST("/create")
-		reservation.GET("/get_all")
-		reservation.GET("get_id/:id")
-		reservation.PUT("/update/:id")
-		reservation.DELETE("/delete/:id")
+		reservation.POST("/create", h.CreateReservationHandler)
+		reservation.GET("/get_all", h.GetAllReservationHandler)
+		reservation.GET("/get_id/:id", h.GetByIdReservationHandler)
+		reservation.PUT("/update/:id", h.UpdateReservationHandler)
+		reservation.DELETE("/delete/:id", h.DeleteReservationHandler)
 	}
 
 	menu := router.Group("/api/menu")
 	{
-		menu.POST("/create")
-		menu.GET("/get_all")
-		menu.GET("/get_id/:id")
-		menu.PUT("/update/:id")
-		menu.DELETE("/delete/:id")
+		menu.POST("/create", h.CreateMenuHandler)
+		menu.GET("/get_all", h.GetAllMenuHandler)
+		menu.GET("/get_id/:id", h.GetByIdMenuHandler)
+		menu.PUT("/update/:id", h.UpdateMenuHandler)
+		menu.DELETE("/delete/:id", h.DeletePaymentHandler)
 	}
 
 	order := router.Group("/api/order")
 	{
-		order.POST("/create")
-		order.GET("/get_all")
-		order.GET("/get_id/:id")
-		order.PUT("/update/:id")
-		order.DELETE("/delete/:id")
+		order.POST("/create", h.CreateOrderHandler)
+		order.GET("/get_all", h.GetAllOrderHandler)
+		order.GET("/get_id/:id", h.GetByIdOrderHandler)
+		order.PUT("/update/:id", h.UpdateOrderHandler)
+		order.DELETE("/delete/:id", h.DeleteOrderHandler)
 	}
 
 	payment := router.Group("/api/payment")
 	{
-		payment.POST("/create")
-		payment.GET("/get_id/:id")
-		payment.PUT("update/:id")
-		payment.DELETE("/delete/:id")
-		payment.GET("/get_all")
-
+		payment.POST("/create", h.CreatePaymentHandler)
+		payment.GET("/get_id/:id", h.GetByIdPaymentHandler)
+		payment.PUT("/update/:id", h.UpdatePaymentHandler)
+		payment.DELETE("/delete/:id", h.DeletePaymentHandler)
+		payment.GET("/get_all", h.GetAllPaymentHandler)
 	}
+	return router
+
 }

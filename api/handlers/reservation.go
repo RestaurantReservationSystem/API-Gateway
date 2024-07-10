@@ -9,224 +9,193 @@ import (
 	"github.com/google/uuid"
 )
 
-// CreateReservationHandler 		handles the creation of a new user
-// @Summary 		Create Menu
-// @Description 	Create page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Create  body     pb.RegisterUserRequest  true   "Create"
-// @Success 		200   {string}      "Create Successful"
-// @Failure 		401   {string}   string    "Error while Created"
-// @Router 			/api/reservation/create [post]
-
+// CreateReservationHandler handles the creation of a new reservation.
+// @Summary Create Reservation
+// @Description Create a new reservation
+// @Tags Reservation
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param Create body genproto.CreateReservationRequest true "Create Reservation"
+// @Success 200 {object} genproto.ReservationResponse
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/reservation/create [post]
 func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
-
 	request := pb.CreateReservationRequest{}
-
 	err := ctx.ShouldBind(&request)
 	if err != nil {
 		BadRequest(ctx, err)
 		return
 	}
 
-	_, err = uuid.Parse(request.UserId)
-	if err != nil {
+	if _, err := uuid.Parse(request.UserId); err != nil {
 		BadRequest(ctx, err)
 		return
 	}
 
-	_, err = uuid.Parse(request.RestaurantId)
-	if err != nil {
+	if _, err := uuid.Parse(request.RestaurantId); err != nil {
 		BadRequest(ctx, err)
 		return
 	}
 
 	if request.Status != "pending" && request.Status != "confirmed" && request.Status != "cancelled" {
-		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+		BadRequest(ctx, fmt.Errorf("invalid status"))
 		return
 	}
 
-	_, err = h.ReservationService.CreateReservation(ctx, &request)
-
-	if err != nil {
-		InternalServerError(ctx, err)
-		return
-	}
-
-	Created(ctx, nil)
-
-}
-
-// UpdateReservationHandler 		handles the creation of a new user
-// @Summary 		Update Menu
-// @Description 	Update page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Update  body     pb.RegisterUserRequest  true   "Update"
-// @Success 		200   {string}      "Update Successful"
-// @Failure 		401   {string}   string    "Error while Created"
-// @Router 			/api/reservation/update/:id [put]
-
-func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
-
-	request := pb.UpdateReservationRequest{}
-
-	err := ctx.ShouldBind(&request)
-
-	if err != nil {
-		BadRequest(ctx, err)
-		return
-	}
-	_, err = uuid.Parse(request.UserId)
-	if err != nil {
-		BadRequest(ctx, err)
-		return
-	}
-
-	_, err = uuid.Parse(request.RestaurantId)
-	if err != nil {
-		BadRequest(ctx, err)
-		return
-	}
-
-	if request.Status != "" && request.Status != "pending" && request.Status != "confirmed" && request.Status != "cancelled" {
-		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
-		return
-	}
-
-	_, err = h.ReservationService.UpdateReservation(ctx, &request)
-
-	if err != nil {
-		InternalServerError(ctx, err)
-		return
-	}
-
-	OK(ctx, nil)
-
-}
-
-// DeleteReservationHandler 		handles the creation of a new user
-// @Summary 		Delete Menu
-// @Description 	Delete page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Delete  body     pb.RegisterUserRequest  true   "Delete"
-// @Success 		200   {string}      "Delete Successful"
-// @Failure 		401   {string}   string    "Error while Created"
-// @Router 			/api/reservation/delete/:id [delete]
-
-func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
-
-	id := ctx.Param("id")
-
-	_, err := uuid.Parse(id)
-	if err != nil {
-		BadRequest(ctx, err)
-		return
-	}
-
-	request := pb.IdRequest{}
-	request.Id = id
-
-	_, err = h.ReservationService.DeleteReservation(ctx, &request)
-
-	if err != nil {
-		InternalServerError(ctx, err)
-		return
-	}
-
-	Created(ctx, nil)
-}
-
-// GetByIdReservationHandler 		handles the creation of a new user
-// @Summary 		GetId Menu
-// @Description 	GetId page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Get  body     pb.RegisterUserRequest  true   "Get"
-// @Success 		200   {string}      "GetId Successful"
-// @Failure 		401   {string}   string    "Error while Created"
-// @Router 			/api/reservation/get_id/:id [get]
-
-func (h *Handler) GetByIdReservationHandler(ctx *gin.Context) {
-
-	id := ctx.Param("id")
-
-	_, err := uuid.Parse(id)
-	if err != nil {
-		BadRequest(ctx, err)
-		return
-	}
-
-	request := pb.IdRequest{}
-	request.Id = id
-
-	resp, err := h.ReservationService.GetByIdReservation(ctx, &request)
-
+	resp, err := h.ReservationService.CreateReservation(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, resp)
-
 }
 
-// GetAllReservationHandler 		handles the creation of a new user
-// @Summary 		GetAll Menu
-// @Description 	GetAll page
-// @Tags 			Menu
-// @Accept  		json
-// @Security  		BearerAuth
-// @Produce  		json
-// @Param   		Get  body     pb.RegisterUserRequest  true   "Get"
-// @Success 		200   {string}      "GetAll Successful"
-// @Failure 		401   {string}   string    "Error while Created"
-// @Router 			/api/reservation/get_all [get]
-
-func (h *Handler) GetAllReservationHandler(ctx *gin.Context) {
-
-	request := pb.GetAllReservationRequest{}
-
+// UpdateReservationHandler handles the update of a reservation.
+// @Summary Update Reservation
+// @Description Update an existing reservation
+// @Tags Reservation
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Reservation ID"
+// @Param Update body genproto.UpdateReservationRequest true "Update Reservation"
+// @Success 200 {object} genproto.ReservationResponse
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/reservation/update/{id} [put]
+func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
+	request := pb.UpdateReservationRequest{}
 	err := ctx.ShouldBind(&request)
+	if err != nil {
+		BadRequest(ctx, err)
+		return
+	}
 
+	if _, err := uuid.Parse(request.UserId); err != nil {
+		BadRequest(ctx, err)
+		return
+	}
+
+	if _, err := uuid.Parse(request.RestaurantId); err != nil {
+		BadRequest(ctx, err)
+		return
+	}
+
+	if request.Status != "" && request.Status != "pending" && request.Status != "confirmed" && request.Status != "cancelled" {
+		BadRequest(ctx, fmt.Errorf("invalid status"))
+		return
+	}
+
+	resp, err := h.ReservationService.UpdateReservation(ctx, &request)
+	if err != nil {
+		InternalServerError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// DeleteReservationHandler handles the deletion of a reservation.
+// @Summary Delete Reservation
+// @Description Delete an existing reservation
+// @Tags Reservation
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Reservation ID"
+// @Success 200 {object} string
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/reservation/delete/{id} [delete]
+func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if _, err := uuid.Parse(id); err != nil {
+		BadRequest(ctx, err)
+		return
+	}
+
+	_, err := h.ReservationService.DeleteReservation(ctx, &pb.IdRequest{Id: id})
+	if err != nil {
+		InternalServerError(ctx, err)
+		return
+	}
+
+	OK(ctx)
+}
+
+// GetByIdReservationHandler handles fetching a reservation by its ID.
+// @Summary Get Reservation by ID
+// @Description Get a reservation by its ID
+// @Tags Reservation
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Reservation ID"
+// @Success 200 {object} genproto.ReservationResponse
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/reservation/get_id/{id} [get]
+func (h *Handler) GetByIdReservationHandler(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if _, err := uuid.Parse(id); err != nil {
+		BadRequest(ctx, err)
+		return
+	}
+
+	resp, err := h.ReservationService.GetByIdReservation(ctx, &pb.IdRequest{Id: id})
+	if err != nil {
+		InternalServerError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, resp)
+}
+
+// GetAllReservationHandler handles fetching all reservations.
+// @Summary Get All Reservations
+// @Description Get all reservations
+// @Tags Reservation
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param query query genproto.GetAllReservationRequest true "Get All Reservations"
+// @Success 200 {object} genproto.ReservationsResponse
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/reservation/get_all [get]
+func (h *Handler) GetAllReservationHandler(ctx *gin.Context) {
+	request := pb.GetAllReservationRequest{}
+	err := ctx.ShouldBind(&request)
 	if err != nil {
 		BadRequest(ctx, err)
 		return
 	}
 
 	if request.UserId != "" {
-		_, err := uuid.Parse(request.UserId)
-		if err != nil {
-			BadRequest(ctx, err)
-			return
-		}
-	}
-	if request.RestaurantId != "" {
-		_, err := uuid.Parse(request.RestaurantId)
-		if err != nil {
+		if _, err := uuid.Parse(request.UserId); err != nil {
 			BadRequest(ctx, err)
 			return
 		}
 	}
 
-	if request.Status != "" {
-		if request.Status != "" && request.Status != "pending" && request.Status != "confirmed" && request.Status != "cancelled" {
-			BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+	if request.RestaurantId != "" {
+		if _, err := uuid.Parse(request.RestaurantId); err != nil {
+			BadRequest(ctx, err)
 			return
 		}
+	}
+
+	if request.Status != "" && request.Status != "pending" && request.Status != "confirmed" && request.Status != "cancelled" {
+		BadRequest(ctx, fmt.Errorf("invalid status"))
+		return
 	}
 
 	resp, err := h.ReservationService.GetAllReservation(ctx, &request)
-
 	if err != nil {
 		InternalServerError(ctx, err)
 		return
