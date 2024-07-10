@@ -156,16 +156,16 @@ func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
 
 	request := pb.GetAllRestaurantRequest{}
 	request.Name = ctx.Param("name")
-	if &request.Name == nil {
+	if request.Name == "" {
 		request.Name = ""
 	}
-	if &request.PhoneNumber == nil {
+	if request.PhoneNumber == "" {
 		request.PhoneNumber = ""
 	}
-	if &request.Address == nil {
+	if request.Address == "" {
 		request.Address = ""
 	}
-	if &request.Description == nil {
+	if request.Description == "" {
 		request.Description = ""
 	}
 	limit := ctx.Param("limit")
