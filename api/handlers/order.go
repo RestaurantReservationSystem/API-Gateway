@@ -26,29 +26,34 @@ func (h *Handler) CreateOrderHandler(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		BadRequest(ctx, err)
+		h.log.Error("error")
 		return
 	}
 
 	if request.Quantity == "" {
 		BadRequest(ctx, fmt.Errorf("quantity is required"))
+		h.log.Error("error")
 		return
 	}
 
 	if Parse(request.ReservationId) || Parse(request.MenuItemId) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
 		return
 	}
 	if Parse(request.ReservationId) || Parse(request.MenuItemId) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
 		return
 	}
 
 	_, err = h.ReservationService.CreateOrder(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
+		h.log.Error("error")
 		return
 	}
-
+	h.log.Info("ishladi")
 	Created(ctx)
 }
 
@@ -71,6 +76,7 @@ func (h *Handler) UpdateOrderHandler(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		BadRequest(ctx, err)
+		h.log.Error("error")
 		return
 	}
 
@@ -78,20 +84,23 @@ func (h *Handler) UpdateOrderHandler(ctx *gin.Context) {
 
 	if request.Quantity == "" {
 		BadRequest(ctx, fmt.Errorf("quantity is required"))
+		h.log.Error("error")
 		return
 	}
 
 	if Parse(request.ReservationId) || Parse(request.MenuItemId) || Parse(request.Id) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
 		return
 	}
 
 	_, err = h.ReservationService.UpdateOrder(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
+		h.log.Error("error")
 		return
 	}
-
+	h.log.Info("ishladi")
 	OK(ctx)
 }
 
@@ -112,15 +121,17 @@ func (h *Handler) DeleteOrderHandler(ctx *gin.Context) {
 
 	if Parse(id) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
 		return
 	}
 
 	_, err := h.ReservationService.DeleteOrder(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
 		InternalServerError(ctx, err)
+		h.log.Error("error")
 		return
 	}
-
+	h.log.Info("ishladi")
 	OK(ctx)
 }
 
@@ -141,6 +152,7 @@ func (h *Handler) GetByIdOrderHandler(ctx *gin.Context) {
 
 	if Parse(id) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
 		return
 	}
 
@@ -148,9 +160,10 @@ func (h *Handler) GetByIdOrderHandler(ctx *gin.Context) {
 
 	if err != nil {
 		InternalServerError(ctx, err)
+		h.log.Error("error")
 		return
 	}
-
+	h.log.Info("ishladi")
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -172,6 +185,7 @@ func (h *Handler) GetAllOrderHandler(ctx *gin.Context) {
 	err := ctx.ShouldBindQuery(&request)
 	if err != nil {
 		BadRequest(ctx, err)
+		h.log.Error("error")
 		return
 	}
 	if request.Quantity == "" {
@@ -187,8 +201,9 @@ func (h *Handler) GetAllOrderHandler(ctx *gin.Context) {
 
 	if err != nil {
 		InternalServerError(ctx, err)
+		h.log.Error("error")
 		return
 	}
-
+	h.log.Info("ishladi")
 	ctx.JSON(http.StatusOK, resp)
 }

@@ -25,31 +25,36 @@ func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 	request := pb.CreateReservationRequest{}
 	err := ctx.ShouldBind(&request)
 	if err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if _, err := uuid.Parse(request.UserId); err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if _, err := uuid.Parse(request.RestaurantId); err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if request.Status != "pending" && request.Status != "confirmed" && request.Status != "cancelled" {
+		h.log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid status"))
 		return
 	}
 
 	resp, err := h.ReservationService.CreateReservation(ctx, &request)
 	if err != nil {
+		h.log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
-
+	h.log.Info("ishladi")
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -70,31 +75,36 @@ func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
 	request := pb.UpdateReservationRequest{}
 	err := ctx.ShouldBind(&request)
 	if err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if _, err := uuid.Parse(request.UserId); err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if _, err := uuid.Parse(request.RestaurantId); err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if request.Status != "" && request.Status != "pending" && request.Status != "confirmed" && request.Status != "cancelled" {
+		h.log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid status"))
 		return
 	}
 
 	resp, err := h.ReservationService.UpdateReservation(ctx, &request)
 	if err != nil {
+		h.log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
-
+	h.log.Info("ishladi")
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -114,16 +124,18 @@ func (h *Handler) DeleteReservationHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if _, err := uuid.Parse(id); err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	_, err := h.ReservationService.DeleteReservation(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
+		h.log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
-
+	h.log.Info("ishladi")
 	OK(ctx)
 }
 
@@ -143,16 +155,18 @@ func (h *Handler) GetByIdReservationHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if _, err := uuid.Parse(id); err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	resp, err := h.ReservationService.GetByIdReservation(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
+		h.log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
-
+	h.log.Info("ishladi")
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -172,12 +186,14 @@ func (h *Handler) GetAllReservationHandler(ctx *gin.Context) {
 	request := pb.GetAllReservationRequest{}
 	err := ctx.ShouldBind(&request)
 	if err != nil {
+		h.log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if request.UserId != "" {
 		if _, err := uuid.Parse(request.UserId); err != nil {
+			h.log.Error("error")
 			BadRequest(ctx, err)
 			return
 		}
@@ -197,9 +213,10 @@ func (h *Handler) GetAllReservationHandler(ctx *gin.Context) {
 
 	resp, err := h.ReservationService.GetAllReservation(ctx, &request)
 	if err != nil {
+		h.log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
-
+	h.log.Info("ishladi")
 	ctx.JSON(http.StatusOK, resp)
 }
