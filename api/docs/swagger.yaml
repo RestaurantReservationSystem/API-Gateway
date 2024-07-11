@@ -53,13 +53,6 @@ definitions:
       phone_number:
         type: string
     type: object
-  genproto.Filter:
-    properties:
-      limit:
-        type: integer
-      offset:
-        type: integer
-    type: object
   genproto.MenuResponse:
     properties:
       description:
@@ -286,19 +279,31 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all menu items
+      description: Retrieve a list of menu items with optional filtering and pagination.
       parameters:
-      - in: query
-        name: description
-        type: string
-      - in: query
+      - description: Filter by menu item name
+        in: query
         name: name
         type: string
-      - in: query
-        name: price
-        type: number
-      - in: query
+      - description: Filter by menu item description
+        in: query
+        name: description
+        type: string
+      - description: Filter by restaurant ID
+        in: query
         name: restaurant_id
+        type: string
+      - description: Number of items to return
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Filter by menu item price
+        in: query
+        name: price
         type: string
       produces:
       - application/json
@@ -315,9 +320,7 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      security:
-      - BearerAuth: []
-      summary: Get All Menus
+      summary: Get All Menu
       tags:
       - Menu
   /api/menu/get_id/{id}:
@@ -455,17 +458,28 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all orders
+      description: Retrieve  filtering and pagination.
       parameters:
-      - in: query
-        name: menu_item_id
-        type: string
-      - in: query
+      - description: Filter by order item name
+        in: query
         name: quantity
         type: string
-      - in: query
+      - description: Filter by menu item description
+        in: query
+        name: menu_item_id
+        type: string
+      - description: Filter by restaurant ID
+        in: query
         name: reservation_id
         type: string
+      - description: Number of items to return
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -481,9 +495,7 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      security:
-      - BearerAuth: []
-      summary: Get All Orders
+      summary: Get All Order
       tags:
       - Order
   /api/order/get_id/{id}:
@@ -554,6 +566,54 @@ paths:
       summary: Update Order
       tags:
       - Order
+  /api/payment:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve  filtering and pagination.
+      parameters:
+      - description: Filter by order item payment_status
+        in: query
+        name: payment_status
+        type: string
+      - description: Filter by menu item payment_method
+        in: query
+        name: payment_method
+        type: string
+      - description: Filter by restaurant reservation_id
+        in: query
+        name: reservation_id
+        type: string
+      - description: Filter by restaurant amount
+        in: query
+        name: amount
+        type: string
+      - description: Number of items to return
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/genproto.PaymentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get All Payment
+      tags:
+      - Order
   /api/payment/create:
     post:
       consumes:
@@ -615,44 +675,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete Payment
-      tags:
-      - Payment
-  /api/payment/get_all:
-    get:
-      consumes:
-      - application/json
-      description: Get all payments
-      parameters:
-      - in: query
-        name: amount
-        type: number
-      - in: query
-        name: payment_method
-        type: string
-      - in: query
-        name: payment_status
-        type: string
-      - in: query
-        name: reservation_id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/genproto.PaymentsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      security:
-      - BearerAuth: []
-      summary: Get All Payments
       tags:
       - Payment
   /api/payment/get_id/{id}:
@@ -790,20 +812,32 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all reservations
+      description: Retrieve reservations with optional filtering and pagination.
       parameters:
-      - in: query
-        name: reservation_time
-        type: string
-      - in: query
-        name: restaurant_id
-        type: string
-      - in: query
+      - description: Filter by order item status
+        in: query
         name: status
         type: string
-      - in: query
+      - description: Filter by menu item user_id
+        in: query
         name: user_id
         type: string
+      - description: Filter by restaurant reservation_time
+        in: query
+        name: reservation_time
+        type: string
+      - description: Filter by restaurant restaurant_id
+        in: query
+        name: restaurant_id
+        type: string
+      - description: Number of items to return
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -819,9 +853,7 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      security:
-      - BearerAuth: []
-      summary: Get All Reservations
+      summary: Get All Reservation
       tags:
       - Reservation
   /api/reservation/get_id/{id}:
@@ -908,11 +940,11 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Create Successful
           schema:
-            $ref: '#/definitions/genproto.RestaurantResponse'
+            type: string
         "400":
-          description: Bad Request
+          description: Error while Creating
           schema:
             type: string
         "500":
@@ -939,11 +971,11 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Delete Successful
           schema:
             type: string
         "400":
-          description: Bad Request
+          description: Error while Deleting
           schema:
             type: string
         "500":
@@ -955,24 +987,36 @@ paths:
       summary: Delete Restaurant
       tags:
       - Restaurant
-  /api/restaurant/get-all:
+  /api/restaurant/get_all:
     get:
       consumes:
       - application/json
-      description: Retrieves a list of all restaurants
+      description: Retrieve a list of restaurants with optional filtering and pagination
       parameters:
-      - in: query
-        name: address
-        type: string
-      - in: query
-        name: description
-        type: string
-      - in: query
+      - description: Filter by restaurant name
+        in: query
         name: name
         type: string
-      - in: query
+      - description: Filter by restaurant phone number
+        in: query
         name: phone_number
         type: string
+      - description: Filter by restaurant address
+        in: query
+        name: address
+        type: string
+      - description: Filter by restaurant description
+        in: query
+        name: description
+        type: string
+      - description: Number of items to return
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -981,23 +1025,21 @@ paths:
           schema:
             $ref: '#/definitions/genproto.RestaurantsResponse'
         "400":
-          description: Bad Request
+          description: Error while Retrieving
           schema:
             type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
-      security:
-      - BearerAuth: []
       summary: Get All Restaurants
       tags:
       - Restaurant
-  /api/restaurant/get-by-id/{id}:
+  /api/restaurant/get_by_id/{id}:
     get:
       consumes:
       - application/json
-      description: Get a restaurant by its ID
+      description: Retrieve a restaurant by its ID
       parameters:
       - description: Restaurant ID
         in: path
@@ -1012,7 +1054,7 @@ paths:
           schema:
             $ref: '#/definitions/genproto.RestaurantResponse'
         "400":
-          description: Bad Request
+          description: Error while Retrieving
           schema:
             type: string
         "500":
@@ -1045,11 +1087,11 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Update Successful
           schema:
-            $ref: '#/definitions/genproto.RestaurantResponse'
+            type: string
         "400":
-          description: Bad Request
+          description: Error while Updating
           schema:
             type: string
         "500":

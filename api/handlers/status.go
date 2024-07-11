@@ -52,7 +52,6 @@ func BadRequest(gn *gin.Context, err error) {
 
 func Parse(id string) bool {
 	_, err := uuid.Parse(id)
-
 	return !(err == nil)
 }
 
@@ -65,4 +64,11 @@ func IsLimitOffsetValidate(limit string) (int, error) {
 		return 0, err
 	}
 	return limit1, nil
+}
+func IsAmount(id string) bool {
+	_, err := strconv.ParseFloat(id, 32)
+	if err != nil {
+		return false
+	}
+	return true
 }

@@ -173,33 +173,52 @@ func (h *Handler) GetByIdPaymentHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
-// GetAllPaymentHandler handles fetching all payments.
-// @Summary Get All Payments
-// @Description Get all payments
-// @Tags Payment
+// GetAllPaymentHandler  filtering and pagination.
+// @Summary Get All Payment
+// @Description Retrieve  filtering and pagination.
+// @Tags Order
 // @Accept json
-// @Security BearerAuth
 // @Produce json
-// @Param request query genproto.GetAllPaymentRequest true "Get All Payments"
+// @Param payment_status query string false "Filter by order item payment_status"
+// @Param payment_method query string false "Filter by menu item payment_method"
+// @Param reservation_id query string false "Filter by restaurant reservation_id"
+// @Param amount query string false "Filter by restaurant amount"
+// @Param limit query int false "Number of items to return"
+// @Param offset query int false "Offset for pagination"
 // @Success 200 {object} genproto.PaymentsResponse
 // @Failure 400 {object} string
 // @Failure 500 {object} string
-// @Router /api/payment/get_all [get]
+// @Router /api/payment [get]
 func (h *Handler) GetAllPaymentHandler(ctx *gin.Context) {
-	req := pb.GetAllPaymentRequest{}
+	request := pb.GetAllPaymentRequest{}
 
-	err := ctx.ShouldBindQuery(&req)
+	request.PaymentStatus = ctx.Query("payment_status")
+	request.PaymentMethod = ctx.Query("payment_method")
+	payment := ctx.Query("amount")
+	if IsAmount(payment) {
+		BadRequest(ctx, fmt.Errorf("error -> payment is validate"))
+		return
+	}
+	if Parse(request.ReservationId) {
+		BadRequest(ctx, fmt.Errorf("invalid reservation ID"))
+		return
+	}
+	limit := ctx.Query("limit")
+	limit1, err := IsLimitOffsetValidate(limit)
 	if err != nil {
 		BadRequest(ctx, err)
 		return
 	}
-
-	if Parse(req.ReservationId) {
-		BadRequest(ctx, fmt.Errorf("invalid reservation ID"))
+	offset := ctx.Query("offset")
+	offset1, err := IsLimitOffsetValidate(offset)
+	if err != nil {
+		BadRequest(ctx, err)
 		return
 	}
+	request.LimitOffset.Offset = int64(offset1)
+	request.LimitOffset.Limit = int64(limit1)
 
-	resp, err := h.PaymentService.GetAllPayment(ctx, &req)
+	resp, err := h.PaymentService.GetAllPayment(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
 		return

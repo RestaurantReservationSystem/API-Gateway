@@ -24,12 +24,21 @@ func RouterApi(con1 *grpc.ClientConn, con2 *grpc.ClientConn, con3 *grpc.ClientCo
 	reservationCon := genproto.NewReservationServiceClient(con2)
 	userCon := genproto.NewUserServiceClient(con3)
 	h := handlers.NewHandler(paymentCon, reservationCon, userCon)
+	//user := router.Group("/api/user")
+	//{
+	//	user.POST("/register", )
+	//	user.GET("/get_id/:id", h.GetByIdPaymentHandler)
+	//	user.PUT("/update/:id", h.UpdatePaymentHandler)
+	//	user.DELETE("/delete/:id", h.DeletePaymentHandler)
+	//	user.GET("/get_all", h.GetAllPaymentHandler)
+	//}
+	//router.Use(middleware.MiddleWare())
 
 	restaurant := router.Group("/api/restaurant")
 	{
 		restaurant.POST("create", h.CreateRestaurantHandler)
-		restaurant.GET("/get-all", h.GetAllRestaurantsHandler)
-		restaurant.GET("/get-by-id/:id", h.GetByIdRestaurantHandler)
+		restaurant.GET("/get_all", h.GetAllRestaurantsHandler)
+		restaurant.GET("/get_by_id/:id", h.GetByIdRestaurantHandler)
 		restaurant.PUT("update/:id")
 		restaurant.DELETE("delete/:id", h.DeleteRestaurantHandler)
 	}
