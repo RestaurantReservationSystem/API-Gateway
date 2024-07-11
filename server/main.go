@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatal("error")
 	}
-	conn3, err := grpc.NewClient(":8084", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn3, err := grpc.NewClient(":8089", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("error")
 	}

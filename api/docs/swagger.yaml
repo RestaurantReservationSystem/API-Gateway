@@ -53,6 +53,18 @@ definitions:
       phone_number:
         type: string
     type: object
+  genproto.GetAllUsers:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/genproto.UserResponse'
+        type: array
+    type: object
+  genproto.LoginRequest:
+    properties:
+      email:
+        type: string
+    type: object
   genproto.MenuResponse:
     properties:
       description:
@@ -106,6 +118,15 @@ definitions:
         items:
           $ref: '#/definitions/genproto.PaymentResponse'
         type: array
+    type: object
+  genproto.RegisterUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      user_name:
+        type: string
     type: object
   genproto.ReservationResponse:
     properties:
@@ -204,6 +225,32 @@ definitions:
       name:
         type: string
       phone_number:
+        type: string
+    type: object
+  genproto.UpdatedUserRequest:
+    properties:
+      Id:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      user_name:
+        type: string
+    type: object
+  genproto.UserResponse:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      updated_at:
+        type: string
+      user_name:
         type: string
     type: object
 host: localhost:8080
@@ -1103,4 +1150,211 @@ paths:
       summary: Update Restaurant
       tags:
       - Restaurant
+  /api/user/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete Successful
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete User
+      tags:
+      - User
+  /api/user/get_all:
+    get:
+      consumes:
+      - application/json
+      description: Get all users with optional filtering
+      parameters:
+      - description: User Name
+        in: query
+        name: user_name
+        type: string
+      - description: Password
+        in: query
+        name: password
+        type: string
+      - description: Email
+        in: query
+        name: email
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get All Users Successful
+          schema:
+            $ref: '#/definitions/genproto.GetAllUsers'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get all users
+      tags:
+      - User
+  /api/user/get_id/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get User Successful
+          schema:
+            $ref: '#/definitions/genproto.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get User by ID
+      tags:
+      - User
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user
+      parameters:
+      - description: Login
+        in: body
+        name: Create
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login Successful
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Login User
+      tags:
+      - User
+  /api/user/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: Create
+        in: body
+        name: Create
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Create Successful
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create User
+      tags:
+      - User
+  /api/user/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update an existing user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update
+        in: body
+        name: Update
+        required: true
+        schema:
+          $ref: '#/definitions/genproto.UpdatedUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Update Successful
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update User
+      tags:
+      - User
 swagger: "2.0"

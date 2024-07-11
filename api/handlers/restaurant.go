@@ -158,7 +158,6 @@ func (h *Handler) DeleteRestaurantHandler(ctx *gin.Context) {
 // @Router /api/restaurant/get_by_id/{id} [get]
 func (h *Handler) GetByIdRestaurantHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
-	fmt.Println(id)
 	_, err := uuid.Parse(id)
 	if err != nil {
 		h.log.Error("error")
@@ -168,6 +167,7 @@ func (h *Handler) GetByIdRestaurantHandler(ctx *gin.Context) {
 
 	resp, err := h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
+
 		h.log.Error("error")
 		InternalServerError(ctx, err)
 		return
