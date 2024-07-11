@@ -256,7 +256,7 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: APi service
+  description: API service
   version: "1.0"
 paths:
   /api/menu/create:
@@ -367,6 +367,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Get All Menu
       tags:
       - Menu
@@ -542,6 +544,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Get All Order
       tags:
       - Order
@@ -658,6 +662,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Get All Payment
       tags:
       - Order
@@ -900,6 +906,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Get All Reservation
       tags:
       - Reservation
@@ -1079,6 +1087,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Get All Restaurants
       tags:
       - Restaurant
@@ -1357,4 +1367,9 @@ paths:
       summary: Update User
       tags:
       - User
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

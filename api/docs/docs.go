@@ -117,6 +117,11 @@ const docTemplate = `{
         },
         "/api/menu/get_all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a list of menu items with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
@@ -397,6 +402,11 @@ const docTemplate = `{
         },
         "/api/order/get_all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve orders with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
@@ -571,6 +581,11 @@ const docTemplate = `{
         },
         "/api/payment": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve  filtering and pagination.",
                 "consumes": [
                     "application/json"
@@ -951,6 +966,11 @@ const docTemplate = `{
         },
         "/api/reservation/get_all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve reservations with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
@@ -1231,6 +1251,11 @@ const docTemplate = `{
         },
         "/api/restaurant/get_all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a list of restaurants with optional filtering and pagination",
                 "consumes": [
                     "application/json"
@@ -2128,6 +2153,13 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
@@ -2138,7 +2170,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "",
-	Description:      "APi service",
+	Description:      "API service",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

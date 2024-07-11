@@ -44,31 +44,36 @@ func isValidOffset(offset string) (int, error) {
 func (h *Handler) CreateUser(gn *gin.Context) {
 	request := pb.RegisterUserRequest{}
 	if err := gn.ShouldBindJSON(&request); err != nil {
+		h.Log.Error("error")
 		BadRequest(gn, err)
 		return
 	}
+	h.Log.Info("salom")
 	fmt.Println("++++++++++")
 
 	if len(request.UserName) < 4 {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("username is not valid"))
 		return
 	}
 	if len(request.Password) < 7 {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("password is not valid"))
 		return
 	}
 	if len(request.Email) < 7 || !strings.Contains(request.Email, "@gmail.com") {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("email is not valid"))
 		return
 	}
 
 	_, err := h.UsersService.CreateUser(gn, &request)
 	if err != nil {
-		fmt.Println("++++++++++", err)
+		h.Log.Error("error")
 		InternalServerError(gn, err)
 		return
 	}
-
+	h.Log.Info("ishladi")
 	Created(gn)
 }
 
@@ -88,40 +93,47 @@ func (h *Handler) CreateUser(gn *gin.Context) {
 func (h *Handler) UpdateUser(gn *gin.Context) {
 	id := gn.Param("id")
 	if !isValidUUID(id) {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("ID is not valid"))
 		return
 	}
 
 	request := pb.UpdatedUserRequest{}
 	if err := gn.ShouldBind(&request); err != nil {
+		h.Log.Error("error")
 		BadRequest(gn, err)
 		return
 	}
 
 	if len(request.UserName) < 4 {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("username is not valid"))
 		return
 	}
 	if len(request.Password) < 7 {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("password is not valid"))
 		return
 	}
 	if len(request.Email) < 7 || !strings.Contains(request.Email, "@gmail.com") {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("email is not valid"))
 		return
 	}
 	request.Id = id
 	_, err := h.UsersService.GetByIdUser(gn, &pb.IdRequest{})
 	if err != nil {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("bu id database da yoq"))
 		return
 	}
 	_, err = h.UsersService.UpdateUser(gn, &request)
 	if err != nil {
+		h.Log.Error("error")
 		InternalServerError(gn, err)
 		return
 	}
-
+	h.Log.Info("ishladi")
 	OK(gn)
 }
 
@@ -154,7 +166,7 @@ func (h *Handler) DeleteUser(gn *gin.Context) {
 		InternalServerError(gn, err)
 		return
 	}
-
+    h.Log.Info("ishladi")
 	OK(gn)
 }
 
@@ -173,16 +185,18 @@ func (h *Handler) DeleteUser(gn *gin.Context) {
 func (h *Handler) GetUserById(gn *gin.Context) {
 	id := gn.Param("id")
 	if !isValidUUID(id) {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("ID is not valid"))
 		return
 	}
 
 	response, err := h.UsersService.GetByIdUser(gn, &pb.IdRequest{Id: id})
 	if err != nil {
+		h.Log.Error("error")
 		InternalServerError(gn, err)
 		return
 	}
-
+    h.Log.Info("ishladi")
 	gn.JSON(http.StatusOK, response)
 }
 
@@ -208,12 +222,14 @@ func (h *Handler) GetAllUser(gn *gin.Context) {
 
 	limit, err := isValidLimit(limitStr)
 	if err != nil {
+		h.Log.Error("error")
 		BadRequest(gn, err)
 		return
 	}
 
 	offset, err := isValidOffset(offsetStr)
 	if err != nil {
+		h.Log.Error("error")
 		BadRequest(gn, err)
 		return
 	}
@@ -227,10 +243,11 @@ func (h *Handler) GetAllUser(gn *gin.Context) {
 
 	response, err := h.UsersService.GetAllUser(gn, &request)
 	if err != nil {
+		h.Log.Error("error")
 		InternalServerError(gn, err)
 		return
 	}
-
+    h.Log.Info("ishladi")
 	gn.JSON(http.StatusOK, response)
 }
 
@@ -248,25 +265,29 @@ func (h *Handler) GetAllUser(gn *gin.Context) {
 func (h *Handler) LoginUser(gn *gin.Context) {
 	request := pb.LoginRequest{}
 	if err := gn.ShouldBindJSON(&request); err != nil {
+		h.Log.Error("error")
 		BadRequest(gn, err)
 		return
 	}
 
 	if len(request.Email) < 7 && strings.Contains(request.Email, "@gmail.com") {
+		h.Log.Error("error")
 		BadRequest(gn, fmt.Errorf("email is not valid"))
 		return
 	}
 
 	response, err := h.UsersService.LoginUser(gn, &request)
 	if err != nil {
+		h.Log.Error("error")
 		InternalServerError(gn, err)
 		return
 	}
 	accessToken, err := h.UsersService.GenerateToken(gn, response)
 	if err != nil {
+		h.Log.Error("error")
 		InternalServerError(gn, err)
 		return
 	}
-
+    h.Log.Info("ishladi")
 	gn.JSON(http.StatusOK, accessToken)
 }

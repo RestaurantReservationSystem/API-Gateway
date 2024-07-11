@@ -27,24 +27,24 @@ func (h *Handler) CreateOrderHandler(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		BadRequest(ctx, err)
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 
 	if request.Quantity == "" {
 		BadRequest(ctx, fmt.Errorf("quantity is required"))
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 
 	if Parse(request.ReservationId) || Parse(request.MenuItemId) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 	if Parse(request.ReservationId) || Parse(request.MenuItemId) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 	_, err = h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: request.MenuItemId})
@@ -61,10 +61,10 @@ func (h *Handler) CreateOrderHandler(ctx *gin.Context) {
 	_, err = h.ReservationService.CreateOrder(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
-	h.log.Info("ishladi")
+	h.Log.Info("ishladi")
 	Created(ctx)
 }
 
@@ -87,7 +87,7 @@ func (h *Handler) UpdateOrderHandler(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		BadRequest(ctx, err)
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 
@@ -95,13 +95,13 @@ func (h *Handler) UpdateOrderHandler(ctx *gin.Context) {
 
 	if request.Quantity == "" {
 		BadRequest(ctx, fmt.Errorf("quantity is required"))
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 
 	if Parse(request.ReservationId) || Parse(request.MenuItemId) || Parse(request.Id) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 	_, err = h.ReservationService.GetByIdOrder(ctx, &pb.IdRequest{Id: request.Id})
@@ -123,10 +123,10 @@ func (h *Handler) UpdateOrderHandler(ctx *gin.Context) {
 	_, err = h.ReservationService.UpdateOrder(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
-	h.log.Info("ishladi")
+	h.Log.Info("ishladi")
 	OK(ctx)
 }
 
@@ -147,7 +147,7 @@ func (h *Handler) DeleteOrderHandler(ctx *gin.Context) {
 
 	if Parse(id) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 	_, err := h.ReservationService.GetByIdOrder(ctx, &pb.IdRequest{})
@@ -159,10 +159,10 @@ func (h *Handler) DeleteOrderHandler(ctx *gin.Context) {
 	_, err = h.ReservationService.DeleteOrder(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
 		InternalServerError(ctx, err)
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
-	h.log.Info("ishladi")
+	h.Log.Info("ishladi")
 	OK(ctx)
 }
 
@@ -183,7 +183,7 @@ func (h *Handler) GetByIdOrderHandler(ctx *gin.Context) {
 
 	if Parse(id) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 
@@ -191,10 +191,10 @@ func (h *Handler) GetByIdOrderHandler(ctx *gin.Context) {
 
 	if err != nil {
 		InternalServerError(ctx, err)
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
-	h.log.Info("ishladi")
+	h.Log.Info("ishladi")
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -202,6 +202,7 @@ func (h *Handler) GetByIdOrderHandler(ctx *gin.Context) {
 // @Summary Get All Order
 // @Description Retrieve orders with optional filtering and pagination.
 // @Tags Order
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param quantity query string false "Filter by order item quantity"
@@ -220,7 +221,7 @@ func (h *Handler) GetAllOrderHandler(ctx *gin.Context) {
 	limit1, err := IsLimitOffsetValidate(limit)
 	if err != nil {
 		BadRequest(ctx, err)
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
 	offset := ctx.Query("offset")
@@ -268,10 +269,10 @@ func (h *Handler) GetAllOrderHandler(ctx *gin.Context) {
 	resp, err := h.ReservationService.GetAllOrder(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, err)
-		h.log.Error("error")
+		h.Log.Error("error")
 		return
 	}
-	h.log.Info("ishladi")
+	h.Log.Info("ishladi")
 
 	ctx.JSON(http.StatusOK, resp)
 }

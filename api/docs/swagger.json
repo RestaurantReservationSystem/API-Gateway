@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "APi service",
+        "description": "API service",
         "contact": {},
         "version": "1.0"
     },
@@ -110,6 +110,11 @@
         },
         "/api/menu/get_all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a list of menu items with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
@@ -390,6 +395,11 @@
         },
         "/api/order/get_all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve orders with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
@@ -564,6 +574,11 @@
         },
         "/api/payment": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve  filtering and pagination.",
                 "consumes": [
                     "application/json"
@@ -944,6 +959,11 @@
         },
         "/api/reservation/get_all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve reservations with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
@@ -1224,6 +1244,11 @@
         },
         "/api/restaurant/get_all": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a list of restaurants with optional filtering and pagination",
                 "consumes": [
                     "application/json"
@@ -2120,6 +2145,13 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

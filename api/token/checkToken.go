@@ -1,15 +1,16 @@
 package token
 
 import (
-	"api_get_way/config"
 	"errors"
+
 	"github.com/form3tech-oss/jwt-go"
 	_ "github.com/form3tech-oss/jwt-go"
 )
 
-var secret_key = config.Load().TokenKey
+var secret_key = "salom"
 
 func ExtractClaim(tokenStr string) (jwt.MapClaims, error) {
+	
 	var (
 		token *jwt.Token
 		err   error
