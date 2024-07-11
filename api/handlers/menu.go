@@ -4,6 +4,7 @@ import (
 	pb "api_get_way/genproto"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,15 +21,21 @@ import (
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/menu/create [post]
-
 func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
-	// Initialize a protobuf request structure
 	request := pb.CreateMenuRequest{}
-
-	// Bind JSON request body to protobuf structure
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		BadRequest(ctx, err)
+		return
+	}
+	if Parse(request.RestaurantId) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
+		return
+	}
 
+	if request.Description == "" || request.Name == "" {
+		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+		return
+	}
 		if Parse(request.RestaurantId) {
 			BadRequest(ctx, fmt.Errorf("id hato"))
 			return
@@ -53,31 +60,41 @@ func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
 			InternalServerError(ctx,err)
 		}
 
-		// Call the service method to create the menu item
-		_, err := h.ReservationService.CreateMenu(ctx, &request)
-		if err != nil {
-			InternalServerError(ctx, err)
-			return
-		}
-
-		// Respond with success message
-		Created(ctx)
+	if Parse(request.RestaurantId) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
+		return
+	}
+	if request.Price < 0 {
+		BadRequest(ctx, fmt.Errorf("Price Xatto"))
+		return
+	}
+	_, err := h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("Restaurant id yoq"))
+		return
+	}
+	_, err = h.ReservationService.CreateMenu(ctx, &request)
+	if err != nil {
+		InternalServerError(ctx, err)
+		return
 	}
 
-	// UpdateMenuHandler handles the update of a menu item.
-	// @Summary Update Menu
-	// @Description Update an existing menu item
-	// @Tags Menu
-	// @Accept json
-	// @Security BearerAuth
-	// @Produce json
-	// @Param id path string true "Menu ID"
-	// @Param Update body genproto.UpdateMenuRequest true "Update Menu"
-	// @Success 200 {object} string
-	// @Failure 400 {object} string
-	// @Failure 500 {object} string
-	// @Router /api/menu/update/{id} [put]
+	Created(ctx)
 }
+
+// UpdateMenuHandler handles the update of a menu item.
+// @Summary Update Menu
+// @Description Update an existing menu item
+// @Tags Menu
+// @Accept json
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Menu ID"
+// @Param Update body genproto.UpdateMenuRequest true "Update Menu"
+// @Success 200 {object} string
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /api/menu/update/{id} [put]
 func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 	request := pb.UpdateMenuRequest{}
 
@@ -97,7 +114,21 @@ func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
 		return
 	}
-
+	_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("Restaurant id yoq"))
+		return
+	}
+	_, err = h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: request.RestaurantId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("Menu id yoq"))
+		return
+	}
+	_, err = h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: request.Id})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("error is ->bu id yoq database da yoq"))
+		return
+	}
 	_, err = h.ReservationService.UpdateMenu(ctx, &request)
 
 	if err != nil {
@@ -122,7 +153,6 @@ func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/menu/delete/{id} [delete]
-
 func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -131,9 +161,15 @@ func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
-	_, err := h.ReservationService.GetByIdReservation(ctx, &pb.IdRequest{Id: id})
+	_, err := h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
-		BadRequest(ctx, err)
+		BadRequest(ctx, fmt.Errorf("error is  ->bu id yoq database da yoq"))
+		return
+	}
+	_, err = h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("Menu id yoq"))
+		return
 	}
 
 	_, err = h.ReservationService.DeleteMenu(ctx, &pb.IdRequest{Id: id})
@@ -159,7 +195,6 @@ func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/menu/get_id/{id} [get]
-
 func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -167,57 +202,92 @@ func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
+
 	resp, err := h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
-		InternalServerError(ctx, err)
+		InternalServerError(ctx, fmt.Errorf(""))
 		return
 	}
 
 	ctx.JSON(http.StatusOK, resp)
 }
 
-// GetAllMenuHandler handles the request to fetch all menu items.
-// @Summary Get All Menus
-// @Description Get all menu items
+// GetAllMenuHandler retrieves a list of menu items with optional filtering and pagination.
+// @Summary Get All Menu
+// @Description Retrieve a list of menu items with optional filtering and pagination.
 // @Tags Menu
 // @Accept json
-// @Security BearerAuth
 // @Produce json
-// @Param request query genproto.GetAllMenuRequest true "Get All Menus"
+// @Param name query string false "Filter by menu item name"
+// @Param description query string false "Filter by menu item description"
+// @Param restaurant_id query string false "Filter by restaurant ID"
+// @Param limit query int false "Number of items to return"
+// @Param offset query int false "Offset for pagination"
+// @Param price query string false "Filter by menu item price"
 // @Success 200 {object} genproto.MenusResponse
 // @Failure 400 {object} string
 // @Failure 500 {object} string
 // @Router /api/menu/get_all [get]
-
 func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
-	request := pb.GetAllMenuRequest{}
+	request := pb.GetAllMenuRequest{
+		Name:         ctx.Query("name"),
+		Description:  ctx.Query("description"),
+		RestaurantId: ctx.Query("restaurant_id"),
+		LimitOffset:  &pb.Filter{}, // Ensure LimitOffset is initialized
+	}
 
-	err := ctx.ShouldBind(&request)
+	if request.Name == "" {
+		request.Name = " "
+	}
+	if request.Description == "" {
+		request.Description = " "
+	}
 
+	limit := ctx.Query("limit")
+	limit1, err := IsLimitOffsetValidate(limit)
 	if err != nil {
-		fmt.Println("++++++++")
 		BadRequest(ctx, err)
-	}
-
-	if Parse(request.RestaurantId) {
-		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
-	if request.Name == "" || request.Description == "" {
-		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+
+	offset := ctx.Query("offset")
+	offset1, err := IsLimitOffsetValidate(offset)
+	if err != nil {
+		BadRequest(ctx, err)
 		return
 	}
-	if len(request.RestaurantId) > 0 {
 
-		if Parse(request.RestaurantId) {
-			BadRequest(ctx, fmt.Errorf("id hato"))
+	price := ctx.Query("price")
+	var price1 int
+	if price != "" {
+		price1, err = strconv.Atoi(price)
+		if err != nil {
+			BadRequest(ctx, err)
 			return
 		}
 	}
-	resp, err := h.ReservationService.GetAllMenu(ctx, &request)
 
+	request.LimitOffset.Limit = int64(limit1)
+	request.LimitOffset.Offset = int64(offset1)
+	request.Price = float32(price1)
+
+	if len(request.RestaurantId) != 0 {
+		if Parse(request.RestaurantId) {
+			BadRequest(ctx, fmt.Errorf("id hato"))
+			return
+		} else {
+			_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
+			if err != nil {
+				BadRequest(ctx, fmt.Errorf("Restaurant id yoq"))
+				return
+			}
+		}
+	}
+
+	resp, err := h.ReservationService.GetAllMenu(ctx, &request)
 	if err != nil {
+		fmt.Println("+++++++++", err)
 		InternalServerError(ctx, err)
 		return
 	}
