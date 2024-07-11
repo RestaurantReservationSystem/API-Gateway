@@ -206,7 +206,7 @@ func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
 		PhoneNumber: ctx.Query("phone_number"),
 		Address:     ctx.Query("address"),
 		Description: ctx.Query("description"),
-	request := pb.GetAllRestaurantRequest{}
+	}
 	request.Name = ctx.Param("name")
 	if request.Name == "" {
 		request.Name = ""
@@ -234,20 +234,15 @@ func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
 		BadRequest(ctx, err)
 		return
 	}
-	request.LimitOffset.Offset = int64(offset1)
-	fmt.Println("+++++++++", offset1)
-
-	resp, err := h.ReservationService.GetAllRestaurants(ctx, &request)
-	if err != nil {
-		h.log.Error("error")
-
+	
 	request.LimitOffset = &pb.Filter{
 		Offset: int64(offset),
 		Limit:  int64(limit),
 	}
-
+	
 	resp, err := h.ReservationService.GetAllRestaurants(ctx, &request)
 	if err != nil {
+		h.log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
