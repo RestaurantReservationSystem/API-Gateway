@@ -196,7 +196,6 @@ func (h *Handler) GetAllRestaurantsHandler(ctx *gin.Context) {
 		Address:     ctx.Query("address"),
 		Description: ctx.Query("description"),
 	}
-
 	limit, err := validateLimitOffset(ctx.Query("limit"), 10) // Default limit is 10
 	if err != nil {
 		BadRequest(ctx, err)

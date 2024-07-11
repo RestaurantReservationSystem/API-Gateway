@@ -213,12 +213,6 @@ func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 		LimitOffset:  &pb.Filter{}, // Ensure LimitOffset is initialized
 	}
 
-	if request.Name == "" {
-		request.Name = " "
-	}
-	if request.Description == "" {
-		request.Description = " "
-	}
 
 	limit := ctx.Query("limit")
 	limit1, err := IsLimitOffsetValidate(limit)
@@ -242,7 +236,7 @@ func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 			BadRequest(ctx, err)
 			return
 		}
-	}
+	} 
 
 	request.LimitOffset.Limit = int64(limit1)
 	request.LimitOffset.Offset = int64(offset1)
