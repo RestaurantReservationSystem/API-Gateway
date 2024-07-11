@@ -49,30 +49,30 @@ func (h *Handler) CreatePaymentHandler(ctx *gin.Context) {
 	payment := pb.CreatePaymentRequest{}
 	err := ctx.ShouldBindJSON(&payment)
 	if err != nil {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if Parse(payment.ReservationId) {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid reservation ID"))
 		return
 	}
 
 	if !isValidPaymentMethod(payment.PaymentMethod) {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid payment method"))
 		return
 	}
 
 	_, err = h.PaymentService.CreatePayment(ctx, &payment)
 	if err != nil {
-		h.log.Error("error")
+		h.Log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
-	h.log.Info("iahkadu")
+	h.Log.Info("iahkadu")
 	Created(ctx)
 }
 
@@ -93,33 +93,33 @@ func (h *Handler) UpdatePaymentHandler(ctx *gin.Context) {
 	payment := pb.UpdatePaymentRequest{}
 	err := ctx.ShouldBindJSON(&payment)
 	if err != nil {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	payment.Id = ctx.Param("id")
 	if Parse(payment.Id) {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid payment ID"))
 		return
 	}
 
 	if Parse(payment.ReservationId) {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid reservation ID"))
 		return
 	}
 
 	if !isValidPaymentMethod(payment.PaymentMethod) {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid payment method"))
 		return
 	}
 
 	_, err = h.PaymentService.UpdatePayment(ctx, &payment)
 	if err != nil {
-		h.log.Error("error")
+		h.Log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
@@ -143,14 +143,14 @@ func (h *Handler) DeletePaymentHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if Parse(id) {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid payment ID"))
 		return
 	}
 
 	_, err := h.PaymentService.DeletePayment(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
-		h.log.Error("error")
+		h.Log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
@@ -174,14 +174,14 @@ func (h *Handler) GetByIdPaymentHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if Parse(id) {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid payment ID"))
 		return
 	}
 
 	resp, err := h.PaymentService.GetByIdPayment(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
-		h.log.Error("error")
+		h.Log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}
@@ -193,6 +193,7 @@ func (h *Handler) GetByIdPaymentHandler(ctx *gin.Context) {
 // @Summary Get All Payment
 // @Description Retrieve  filtering and pagination.
 // @Tags Order
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param payment_status query string false "Filter by order item payment_status"
@@ -222,13 +223,13 @@ func (h *Handler) GetAllPaymentHandler(ctx *gin.Context) {
 	limit := ctx.Query("limit")
 	limit1, err := IsLimitOffsetValidate(limit)
 	if err != nil {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, err)
 		return
 	}
 
 	if Parse(request.ReservationId) {
-		h.log.Error("error")
+		h.Log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid reservation ID"))
 
 	offset := ctx.Query("offset")
@@ -242,7 +243,7 @@ func (h *Handler) GetAllPaymentHandler(ctx *gin.Context) {
 
 	resp, err := h.PaymentService.GetAllPayment(ctx, &request)
 	if err != nil {
-		h.log.Error("error")
+		h.Log.Error("error")
 		InternalServerError(ctx, err)
 		return
 	}

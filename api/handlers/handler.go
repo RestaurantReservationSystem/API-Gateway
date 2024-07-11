@@ -10,13 +10,15 @@ type Handler struct {
 	PaymentService     genproto.PaymentServiceClient
 	ReservationService genproto.ReservationServiceClient
 	UsersService       genproto.UserServiceClient
-	log                *zap.Logger
+	Log                *zap.Logger
 }
 
-func NewHandler(payment genproto.PaymentServiceClient, reservation genproto.ReservationServiceClient, user genproto.UserServiceClient) *Handler {
+func NewHandler(payment genproto.PaymentServiceClient, reservation genproto.ReservationServiceClient, user genproto.UserServiceClient, l *zap.Logger) *Handler {
 	return &Handler{
 		PaymentService:     payment,
 		ReservationService: reservation,
 		UsersService:       user,
+		Log: l,
+		
 	}
 }

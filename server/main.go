@@ -34,7 +34,7 @@ func main() {
 	if err != nil {
 		log.Fatal("error")
 	}
-	router := api.RouterApi(conn1, conn2, conn3)
+	router := api.RouterApi(conn1, conn2, conn3,logger)
 	err = router.Run(":8080")
 	if err != nil {
 		log.Fatal("error is pai get way connection port")
