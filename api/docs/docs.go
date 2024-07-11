@@ -117,12 +117,7 @@ const docTemplate = `{
         },
         "/api/menu/get_all": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get all menu items",
+                "description": "Retrieve a list of menu items with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
                 ],
@@ -132,26 +127,42 @@ const docTemplate = `{
                 "tags": [
                     "Menu"
                 ],
-                "summary": "Get All Menus",
+                "summary": "Get All Menu",
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Filter by menu item name",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by menu item description",
                         "name": "description",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "name",
+                        "description": "Filter by restaurant ID",
+                        "name": "restaurant_id",
                         "in": "query"
                     },
                     {
-                        "type": "number",
-                        "name": "price",
+                        "type": "integer",
+                        "description": "Number of items to return",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "name": "restaurant_id",
+                        "description": "Filter by menu item price",
+                        "name": "price",
                         "in": "query"
                     }
                 ],
@@ -386,12 +397,7 @@ const docTemplate = `{
         },
         "/api/order/get_all": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get all orders",
+                "description": "Retrieve orders with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
                 ],
@@ -401,21 +407,36 @@ const docTemplate = `{
                 "tags": [
                     "Order"
                 ],
-                "summary": "Get All Orders",
+                "summary": "Get All Order",
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "menu_item_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
+                        "description": "Filter by order item quantity",
                         "name": "quantity",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Filter by menu item ID",
+                        "name": "menu_item_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by reservation ID",
                         "name": "reservation_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items to return",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
                         "in": "query"
                     }
                 ],
@@ -548,6 +569,79 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/payment": {
+            "get": {
+                "description": "Retrieve  filtering and pagination.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Get All Payment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by order item payment_status",
+                        "name": "payment_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by menu item payment_method",
+                        "name": "payment_method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by restaurant reservation_id",
+                        "name": "reservation_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by restaurant amount",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items to return",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/genproto.PaymentsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/payment/create": {
             "post": {
                 "security": [
@@ -631,68 +725,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/payment/get_all": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get all payments",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Payment"
-                ],
-                "summary": "Get All Payments",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "name": "amount",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "payment_method",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "payment_status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "reservation_id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/genproto.PaymentsResponse"
                         }
                     },
                     "400": {
@@ -919,12 +951,7 @@ const docTemplate = `{
         },
         "/api/reservation/get_all": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get all reservations",
+                "description": "Retrieve reservations with optional filtering and pagination.",
                 "consumes": [
                     "application/json"
                 ],
@@ -934,26 +961,42 @@ const docTemplate = `{
                 "tags": [
                     "Reservation"
                 ],
-                "summary": "Get All Reservations",
+                "summary": "Get All Reservation",
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "reservation_time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "restaurant_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
+                        "description": "Filter by reservation status",
                         "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Filter by user ID",
                         "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by reservation time",
+                        "name": "reservation_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by restaurant ID",
+                        "name": "restaurant_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items to return",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
                         "in": "query"
                     }
                 ],
@@ -1117,13 +1160,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Create Successful",
                         "schema": {
-                            "$ref": "#/definitions/genproto.RestaurantResponse"
+                            "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Error while Creating",
                         "schema": {
                             "type": "string"
                         }
@@ -1166,13 +1209,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Delete Successful",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Error while Deleting",
                         "schema": {
                             "type": "string"
                         }
@@ -1186,14 +1229,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/restaurant/get-all": {
+        "/api/restaurant/get_all": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Retrieves a list of all restaurants",
+                "description": "Retrieve a list of restaurants with optional filtering and pagination",
                 "consumes": [
                     "application/json"
                 ],
@@ -1207,22 +1245,38 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "address",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
+                        "description": "Filter by restaurant name",
                         "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "description": "Filter by restaurant phone number",
                         "name": "phone_number",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by restaurant address",
+                        "name": "address",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by restaurant description",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items to return",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
                         "in": "query"
                     }
                 ],
@@ -1234,7 +1288,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Error while Retrieving",
                         "schema": {
                             "type": "string"
                         }
@@ -1248,14 +1302,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/restaurant/get-by-id/{id}": {
+        "/api/restaurant/get_by_id/{id}": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get a restaurant by its ID",
+                "description": "Retrieve a restaurant by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -1283,7 +1337,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Error while Retrieving",
                         "schema": {
                             "type": "string"
                         }
@@ -1335,13 +1389,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Update Successful",
                         "schema": {
-                            "$ref": "#/definitions/genproto.RestaurantResponse"
+                            "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Error while Updating",
                         "schema": {
                             "type": "string"
                         }
@@ -1436,17 +1490,6 @@ const docTemplate = `{
                 },
                 "phone_number": {
                     "type": "string"
-                }
-            }
-        },
-        "genproto.Filter": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "integer"
-                },
-                "offset": {
-                    "type": "integer"
                 }
             }
         },
