@@ -69,6 +69,7 @@ func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
 		}
 
 		// Respond with success message
+		
 		Created(ctx)
 	}
 
