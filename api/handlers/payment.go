@@ -227,7 +227,7 @@ func (h *Handler) GetAllPaymentHandler(ctx *gin.Context) {
 		return
 	}
 
-	if Parse(req.ReservationId) {
+	if Parse(request.ReservationId) {
 		h.log.Error("error")
 		BadRequest(ctx, fmt.Errorf("invalid reservation ID"))
 
@@ -248,4 +248,5 @@ func (h *Handler) GetAllPaymentHandler(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, resp)
+}
 }

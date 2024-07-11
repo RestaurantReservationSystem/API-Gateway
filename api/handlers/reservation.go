@@ -3,10 +3,11 @@ package handlers
 import (
 	pb "api_get_way/genproto"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // CreateReservationHandler handles the creation of a new reservation.
@@ -39,7 +40,7 @@ func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 
 	if _, err := uuid.Parse(request.RestaurantId); err != nil {
 		h.log.Error("error")
-		
+
 		BadRequest(ctx, fmt.Errorf("invalid restaurant ID: %v", err))
 		return
 	}
@@ -56,27 +57,24 @@ func (h *Handler) CreateReservationHandler(ctx *gin.Context) {
 		InternalServerError(ctx, err)
 		return
 	}
-	h.log.Info("ishladi")
-	ctx.JSON(http.StatusOK, resp)
-		
-	}
 
 	request.ReservationTime = time1.Format(time.RFC3339)
-	//_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
-	//if err != nil {
-	//	BadRequest(ctx, fmt.Errorf("Restaurant bazada mavjud emas"))
-	//	return
-	//}
-	//_, err = h.UsersService.GetByIdUser(ctx, &pb.IdRequest{Id: request.UserId})
-	//if err != nil {
-	//	BadRequest(ctx, fmt.Errorf("User bazada mavjud emas"))
-	//	return
-	//}
+	_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("Restaurant bazada mavjud emas"))
+		return
+	}
+	_, err = h.UsersService.GetByIdUser(ctx, &pb.IdRequest{Id: request.UserId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("User bazada mavjud emas"))
+		return
+	}
 	_, err = h.ReservationService.CreateReservation(ctx, &request)
 	if err != nil {
 		InternalServerError(ctx, fmt.Errorf("failed to create reservation: %v", err))
 		return
 	}
+	h.log.Info("ishladi")
 	OK(ctx)
 
 }
@@ -126,22 +124,17 @@ func (h *Handler) UpdateReservationHandler(ctx *gin.Context) {
 		InternalServerError(ctx, err)
 		return
 	}
-	h.log.Info("ishladi")
-	ctx.JSON(http.StatusOK, resp)
-=======
-		BadRequest(ctx, fmt.Errorf("Bu id Databaseda yoq"))
+
+	_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("Restaurant bazada mavjud emas"))
 		return
 	}
-	//_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
-	//if err != nil {
-	//	BadRequest(ctx, fmt.Errorf("Restaurant bazada mavjud emas"))
-	//	return
-	//}
-	//_, err = h.UsersService.GetByIdUser(ctx, &pb.IdRequest{Id: request.UserId})
-	//if err != nil {
-	//	BadRequest(ctx, fmt.Errorf("User bazada mavjud emas"))
-	//	return
-	//}
+	_, err = h.UsersService.GetByIdUser(ctx, &pb.IdRequest{Id: request.UserId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("User bazada mavjud emas"))
+		return
+	}
 	_, err = h.ReservationService.GetByIdReservation(ctx, &pb.IdRequest{Id: request.UserId})
 	if err != nil {
 		BadRequest(ctx, fmt.Errorf("resevation bazada mavjud emas"))
@@ -252,46 +245,49 @@ func (h *Handler) GetAllReservationHandler(ctx *gin.Context) {
 	request.LimitOffset = &pb.Filter{
 		Limit: int64(limit1),
 	}
-
+	var offset1 int
 	if request.UserId != "" {
 		if _, err := uuid.Parse(request.UserId); err != nil {
 			h.log.Error("error")
 			BadRequest(ctx, err)
-	offset := ctx.Query("offset")
-	offset1, err := IsLimitOffsetValidate(offset)
-	if err != nil {
-		BadRequest(ctx, fmt.Errorf("invalid offset: %v", err))
-		return
-	}
-	request.LimitOffset.Offset = int64(offset1)
-	userID := ctx.Query("user_id")
-	if userID != "" {
-		if _, err := uuid.Parse(userID); err != nil {
-			BadRequest(ctx, fmt.Errorf("invalid user ID: %v", err))
+			offset := ctx.Query("offset")
+			offset1, err = IsLimitOffsetValidate(offset)
+
+		}
+		if err != nil {
+			BadRequest(ctx, fmt.Errorf("invalid offset: %v", err))
 			return
 		}
-		request.UserId = userID
-	}
+		request.LimitOffset.Offset = int64(offset1)
+		userID := ctx.Query("user_id")
+		if userID != "" {
+			if _, err := uuid.Parse(userID); err != nil {
+				BadRequest(ctx, fmt.Errorf("invalid user ID: %v", err))
+				return
+			}
+			request.UserId = userID
+		}
 
-	// Validate restaurant_id if provided
-	restaurantID := ctx.Query("restaurant_id")
-	if restaurantID != "" {
-		if _, err := uuid.Parse(restaurantID); err != nil {
-			BadRequest(ctx, fmt.Errorf("invalid restaurant ID: %v", err))
+		// Validate restaurant_id if provided
+		restaurantID := ctx.Query("restaurant_id")
+		if restaurantID != "" {
+			if _, err := uuid.Parse(restaurantID); err != nil {
+				BadRequest(ctx, fmt.Errorf("invalid restaurant ID: %v", err))
+				return
+			}
+			request.RestaurantId = restaurantID
+		}
+
+		request.Status = ctx.Query("status")
+
+		resp, err := h.ReservationService.GetAllReservation(ctx, &request)
+		if err != nil {
+
+			h.log.Error("error")
+			InternalServerError(ctx, fmt.Errorf("failed to get reservations: %v", err))
 			return
 		}
-		request.RestaurantId = restaurantID
+		h.log.Info("ishladi")
+		ctx.JSON(http.StatusOK, resp)
 	}
-
-	request.Status = ctx.Query("status")
-
-	resp, err := h.ReservationService.GetAllReservation(ctx, &request)
-	if err != nil {
-
-		h.log.Error("error")
-		InternalServerError(ctx, fmt.Errorf("failed to get reservations: %v", err))
-		return
-	}
-	h.log.Info("ishladi")
-	ctx.JSON(http.StatusOK, resp)
 }

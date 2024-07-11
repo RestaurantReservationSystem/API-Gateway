@@ -67,8 +67,5 @@ func IsLimitOffsetValidate(limit string) (int, error) {
 }
 func IsAmount(id string) bool {
 	_, err := strconv.ParseFloat(id, 32)
-	if err != nil {
-		return false
-	}
-	return true
+	return err==nil
 }
