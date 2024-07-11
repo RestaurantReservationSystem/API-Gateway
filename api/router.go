@@ -4,6 +4,7 @@ import (
 	_ "api_get_way/api/docs"
 	"api_get_way/api/handlers"
 	genproto "api_get_way/genproto"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/swaggo/files" // Import swaggo files handler
 	files "github.com/swaggo/files"
@@ -18,18 +19,28 @@ import (
 // @host localhost:8080
 // @BasePath /
 func RouterApi(con1 *grpc.ClientConn, con2 *grpc.ClientConn, con3 *grpc.ClientConn) *gin.Engine {
+	fmt.Println("okokokokokokokfmt.Println(\"okokokokokokokokokok\")okokok")
 	router := gin.Default()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler))
 	paymentCon := genproto.NewPaymentServiceClient(con1)
 	reservationCon := genproto.NewReservationServiceClient(con2)
 	userCon := genproto.NewUserServiceClient(con3)
 	h := handlers.NewHandler(paymentCon, reservationCon, userCon)
+	//user := router.Group("/api/user")
+	//{
+	//	user.POST("/register", )
+	//	user.GET("/get_id/:id", h.GetByIdPaymentHandler)
+	//	user.PUT("/update/:id", h.UpdatePaymentHandler)
+	//	user.DELETE("/delete/:id", h.DeletePaymentHandler)
+	//	user.GET("/get_all", h.GetAllPaymentHandler)
+	//}
+	//router.Use(middleware.MiddleWare())
 
 	restaurant := router.Group("/api/restaurant")
 	{
 		restaurant.POST("create", h.CreateRestaurantHandler)
-		restaurant.GET("/get-all", h.GetAllRestaurantsHandler)
-		restaurant.GET("/get-by-id/:id", h.GetByIdRestaurantHandler)
+		restaurant.GET("/get_all", h.GetAllRestaurantsHandler)
+		restaurant.GET("/get_by_id/:id", h.GetByIdRestaurantHandler)
 		restaurant.PUT("update/:id")
 		restaurant.DELETE("delete/:id", h.DeleteRestaurantHandler)
 	}
@@ -49,7 +60,7 @@ func RouterApi(con1 *grpc.ClientConn, con2 *grpc.ClientConn, con3 *grpc.ClientCo
 		menu.GET("/get_all", h.GetAllMenuHandler)
 		menu.GET("/get_id/:id", h.GetByIdMenuHandler)
 		menu.PUT("/update/:id", h.UpdateMenuHandler)
-		menu.DELETE("/delete/:id", h.DeletePaymentHandler)
+		menu.DELETE("/delete/:id", h.DeleteMenuHandler)
 	}
 
 	order := router.Group("/api/order")

@@ -52,11 +52,10 @@ func BadRequest(gn *gin.Context, err error) {
 
 func Parse(id string) bool {
 	_, err := uuid.Parse(id)
-
 	return !(err == nil)
 }
 
-func IsLimitValidate(limit string) (int, error) {
+func IsLimitOffsetValidate(limit string) (int, error) {
 	if len(limit) == 0 {
 		limit += "0"
 	}
@@ -66,14 +65,10 @@ func IsLimitValidate(limit string) (int, error) {
 	}
 	return limit1, nil
 }
-func IsOffsetValidate(offset string) (int, error) {
-	if len(offset) == 0 {
-		offset += "0"
-	}
-	offset1, err := strconv.Atoi(offset)
+func IsAmount(id string) bool {
+	_, err := strconv.ParseFloat(id, 32)
 	if err != nil {
-
-		return 0, err
+		return false
 	}
-	return offset1, nil
+	return true
 }

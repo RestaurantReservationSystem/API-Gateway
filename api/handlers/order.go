@@ -4,6 +4,7 @@ import (
 	pb "api_get_way/genproto"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,6 +41,16 @@ func (h *Handler) CreateOrderHandler(ctx *gin.Context) {
 	}
 	if Parse(request.ReservationId) || Parse(request.MenuItemId) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
+		return
+	}
+	_, err = h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: request.MenuItemId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("menu id mavjud emas bazada"))
+		return
+	}
+	_, err = h.ReservationService.GetByIdReservation(ctx, &pb.IdRequest{Id: request.ReservationId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("reservation id mavjud emas bazada"))
 		return
 	}
 
@@ -85,6 +96,21 @@ func (h *Handler) UpdateOrderHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
+	_, err = h.ReservationService.GetByIdOrder(ctx, &pb.IdRequest{Id: request.Id})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("error -> order id mavjud emas"))
+		return
+	}
+	_, err = h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: request.MenuItemId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("menu id mavjud emas bazada"))
+		return
+	}
+	_, err = h.ReservationService.GetByIdReservation(ctx, &pb.IdRequest{Id: request.ReservationId})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("reservation id mavjud emas bazada"))
+		return
+	}
 
 	_, err = h.ReservationService.UpdateOrder(ctx, &request)
 	if err != nil {
@@ -114,8 +140,13 @@ func (h *Handler) DeleteOrderHandler(ctx *gin.Context) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
 	}
+	_, err := h.ReservationService.GetByIdOrder(ctx, &pb.IdRequest{})
+	if err != nil {
+		BadRequest(ctx, fmt.Errorf("error -> order id mavjud emas"))
+		return
+	}
 
-	_, err := h.ReservationService.DeleteOrder(ctx, &pb.IdRequest{Id: id})
+	_, err = h.ReservationService.DeleteOrder(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
 		InternalServerError(ctx, err)
 		return
@@ -154,14 +185,17 @@ func (h *Handler) GetByIdOrderHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
-// GetAllOrderHandler handles fetching all orders.
-// @Summary Get All Orders
-// @Description Get all orders
+// GetAllOrderHandler retrieves orders with optional filtering and pagination.
+// @Summary Get All Order
+// @Description Retrieve orders with optional filtering and pagination.
 // @Tags Order
 // @Accept json
-// @Security BearerAuth
 // @Produce json
-// @Param request query genproto.GetAllOrderRequest true "Get All Orders"
+// @Param quantity query string false "Filter by order item quantity"
+// @Param menu_item_id query string false "Filter by menu item ID"
+// @Param reservation_id query string false "Filter by reservation ID"
+// @Param limit query int false "Number of items to return"
+// @Param offset query int false "Offset for pagination"
 // @Success 200 {object} genproto.OrdersResponse
 // @Failure 400 {object} string
 // @Failure 500 {object} string
@@ -169,26 +203,58 @@ func (h *Handler) GetByIdOrderHandler(ctx *gin.Context) {
 func (h *Handler) GetAllOrderHandler(ctx *gin.Context) {
 	request := pb.GetAllOrderRequest{}
 
-	err := ctx.ShouldBindQuery(&request)
+	limit := ctx.Query("limit")
+	limit1, err := IsLimitOffsetValidate(limit)
 	if err != nil {
 		BadRequest(ctx, err)
 		return
 	}
-	if request.Quantity == "" {
+	offset := ctx.Query("offset")
+	offset1, err := IsLimitOffsetValidate(offset)
+	if err != nil {
 		BadRequest(ctx, err)
-	}
-
-	if Parse(request.ReservationId) || Parse(request.MenuItemId) {
-		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
+	}
+	request.LimitOffset = &pb.Filter{
+		Limit:  int64(limit1),
+		Offset: int64(offset1),
+	}
+	request.Quantity = ctx.Query("quantity")
+	if request.Quantity != "" {
+		if _, err := strconv.ParseFloat(request.Quantity, 32); err != nil {
+			BadRequest(ctx, err)
+			return
+		}
+	}
+	request.MenuItemId = ctx.Query("menu_item_id")
+	if request.MenuItemId != "" {
+		if !Parse(request.MenuItemId) {
+			BadRequest(ctx, fmt.Errorf("invalid menu_item_id format"))
+			return
+		}
+		_, err := h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: request.MenuItemId})
+		if err != nil {
+			BadRequest(ctx, fmt.Errorf("menu id does not exist in the database"))
+			return
+		}
+	}
+	request.ReservationId = ctx.Query("reservation_id")
+	if request.ReservationId != "" {
+		if !Parse(request.ReservationId) {
+			BadRequest(ctx, fmt.Errorf("invalid reservation_id format"))
+			return
+		}
+		_, err := h.ReservationService.GetByIdReservation(ctx, &pb.IdRequest{Id: request.ReservationId})
+		if err != nil {
+			BadRequest(ctx, fmt.Errorf("reservation id does not exist in the database"))
+			return
+		}
 	}
 
 	resp, err := h.ReservationService.GetAllOrder(ctx, &request)
-
 	if err != nil {
 		InternalServerError(ctx, err)
 		return
 	}
-
 	ctx.JSON(http.StatusOK, resp)
 }
