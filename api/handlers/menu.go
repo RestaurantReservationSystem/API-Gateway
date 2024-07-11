@@ -25,12 +25,10 @@ func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
 	request := pb.CreateMenuRequest{}
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		BadRequest(ctx, err)
+		h.log.Error("error")
 		return
 	}
-	if Parse(request.RestaurantId) {
-		BadRequest(ctx, fmt.Errorf("id hato"))
-		return
-	}
+	
 
 	if request.Description == "" || request.Name == "" {
 		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
@@ -38,28 +36,41 @@ func (h *Handler) CreateMenuHandler(ctx *gin.Context) {
 	}
 		if Parse(request.RestaurantId) {
 			BadRequest(ctx, fmt.Errorf("id hato"))
+			h.log.Error("error")
 			return
 		}
 
 		// Perform additional validation if needed
 		if request.Description == "" || request.Name == "" {
 			BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+			h.log.Error("error")
 			return
 		}
 
 		if Parse(request.RestaurantId) {
 			BadRequest(ctx, fmt.Errorf("id hato"))
+			h.log.Error("error")
 			return
 		}
 		if request.Price <= 0 {
 			BadRequest(ctx, fmt.Errorf("hatolik price"))
+			h.log.Error("error")
 			return
 		}
 		_, err = h.ReservationService.CreateMenu(ctx, &request)
 		if err != nil {
-			InternalServerError(ctx,err)
+			InternalServerError(ctx, err)
+			h.log.Error("error")
+			return
 		}
 
+		// Call the service method to create the menu item
+		_, err := h.ReservationService.CreateMenu(ctx, &request)
+		if err != nil {
+			InternalServerError(ctx, err)
+			h.log.Error("error")
+			return
+		}
 	if Parse(request.RestaurantId) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
 		return
@@ -101,17 +112,20 @@ func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		BadRequest(ctx, err)
+		h.log.Error("error")
 		return
 	}
 	request.Id = ctx.Param("id")
 
 	if Parse(request.RestaurantId) || Parse(request.Id) {
 		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
 		return
 	}
 
 	if request.Name == "" || request.Description == "" {
 		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+		h.log.Error("error")
 		return
 	}
 	_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
@@ -135,6 +149,7 @@ func (h *Handler) UpdateMenuHandler(ctx *gin.Context) {
 		fmt.Println("++++++++++++++")
 
 		InternalServerError(ctx, err)
+		h.log.Error("error")
 		return
 	}
 
@@ -157,12 +172,14 @@ func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if Parse(id) {
-		fmt.Println("++++++++++++")
-		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
 		return
 	}
 	_, err := h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: id})
 	if err != nil {
+
+		h.log.Error("error")
+
 		BadRequest(ctx, fmt.Errorf("error is  ->bu id yoq database da yoq"))
 		return
 	}
@@ -177,9 +194,10 @@ func (h *Handler) DeleteMenuHandler(ctx *gin.Context) {
 	if err != nil {
 		fmt.Println("++++++++++++", err)
 		InternalServerError(ctx, err)
+		h.log.Error("error")
 		return
 	}
-
+	h.log.Info("ishladi")
 	OK(ctx)
 }
 
@@ -199,17 +217,18 @@ func (h *Handler) GetByIdMenuHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if Parse(id) {
-		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
 		return
 	}
 
 	resp, err := h.ReservationService.GetByIdMenu(ctx, &pb.IdRequest{Id: id})
 
 	if err != nil {
+		h.log.Error("error")
 		InternalServerError(ctx, fmt.Errorf(""))
 		return
 	}
-
+	h.log.Info("ishladi")
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -248,6 +267,19 @@ func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 	limit1, err := IsLimitOffsetValidate(limit)
 	if err != nil {
 		BadRequest(ctx, err)
+		h.log.Error("error")
+		return
+	}
+
+	if Parse(request.RestaurantId) {
+		BadRequest(ctx, fmt.Errorf("id hato"))
+		h.log.Error("error")
+		return
+	}
+	if request.Name == "" || request.Description == "" {
+		BadRequest(ctx, fmt.Errorf("malumot toliq emas"))
+		h.log.Error("error")
+		return
 		return
 	}
 
@@ -275,6 +307,7 @@ func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 	if len(request.RestaurantId) != 0 {
 		if Parse(request.RestaurantId) {
 			BadRequest(ctx, fmt.Errorf("id hato"))
+			h.log.Error("error")
 			return
 		} else {
 			_, err = h.ReservationService.GetByIdRestaurant(ctx, &pb.IdRequest{Id: request.RestaurantId})
@@ -289,6 +322,7 @@ func (h *Handler) GetAllMenuHandler(ctx *gin.Context) {
 	if err != nil {
 		fmt.Println("+++++++++", err)
 		InternalServerError(ctx, err)
+		h.log.Error("error")
 		return
 	}
 

@@ -2,12 +2,26 @@ package main
 
 import (
 	"api_get_way/api"
+	l "api_get_way/pkg/logger"
+	"log"
+
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
 )
 
+var logger *zap.Logger
+
+func initLog() {
+	log, err := l.NewLogger()
+	if err != nil {
+		panic(err)
+	}
+	logger = log
+}
+
 func main() {
+	initLog()
 	conn1, err := grpc.NewClient(":8082", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("error")
